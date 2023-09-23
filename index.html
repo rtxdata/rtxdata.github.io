@@ -195,7 +195,7 @@
                     }
                 } catch (e) {
                     console.error(e);
-                    display(`Ошибка код: ${e.code}, сообщение: ${e.message}`);
+                    display(`Ошибка ${e}`);
                 }
             }
 
@@ -234,15 +234,16 @@
 
         async function init() {
             const SQL = await initSqlJs({});
-
             patterns = await fetch("./patterns.json").then(res => res.json());
             dashboardSQL = await fetch("./dashboard.sql").then(res => res.text());
             db = new SQL.Database();
 
             const { initQuery, ...queries } = getQueries();
-
             initDatabase(initQuery);
-            dashboard(queries);
+
+            const customQuery = location.search === '?sql' && prompt("Введите SQL запрос", localStorage.sql || "SELECT * FROM TX");
+            if (customQuery) { localStorage.sql = customQuery; }
+            dashboard(customQuery ? { [customQuery]: customQuery } : queries);
         }
 
         let db, patterns, dashboardSQL;
