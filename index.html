@@ -4,6 +4,7 @@
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'none';script-src https://cdnjs.cloudflare.com 'unsafe-inline';style-src https://cdnjs.cloudflare.com 'unsafe-inline';connect-src 'self';img-src data: blob:">
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RtxData - Анализ данных из Райфайзен Банка (Сербия)</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.26.0/plotly.min.js"
@@ -15,6 +16,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"
         integrity="sha512-sijCOJblSCXYYmXdwvqV0tak8QJW5iy2yLB1wAbbLc3OOIueqymizRFWUS/mwKctnzPKpNdPJV3aK1zlDMJmXQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-asm.js"
+        integrity="sha512-rmkykIfjko0kedpism7nBHHSJKyB9/Ake2ihqff5QpUSVy3fy5Da7U5chQKtzXGAXEmNqrQ25t+NJIlFh3LoNg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css"
         integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -23,6 +27,10 @@
         body,
         input {
             font-size: 18px;
+        }
+
+        .content {
+            margin: 1em 0;
         }
 
         table {
@@ -51,109 +59,101 @@
 </head>
 
 <body>
-    В вашем браузере не поддерживается Web SQL, необходимый для работы этого приложения.<br>
-    Используйте Chrome, Yandex, Edge или Opera последней версии
-    <template>
-        <h3>RtxData</h3>
-        <div>Анализ данных из Райфайзен Банка (Сербия)</div>
-        <div>
-            <button>Обновить базу с помощью Raiff.json</button>
-            <a href="https://rtxdata.github.io/README.md">Где его взять?</a>
-        </div>
-        <input type="file" accept=".json" style="display: none;" />
-        <div id="results"></div>
-    </template>
+    <h3>RtxData</h3>
+    <div class="content">Анализ данных из Райфайзен Банка (Сербия)</div>
+    <div class="content">
+        <button onclick="fileinput.click()">Обновить данные с помощью Raiff.json</button>
+        <a href="https://github.com/rtxdata/rtxdata.github.io#скачиваем-свои-данные">Где его взять?</a>
+    </div>
+    <div class="content">
+        <button onclick="localStorage.clear();location.reload()">Удалить все данные</button>
+    </div>
+    <input id="fileinput" type="file" accept=".json" style="display: none;" />
+    <div id="results"></div>
     <script>
+        function display(item, type = 'div') {
+            if (item instanceof HTMLElement) {
+                results.appendChild(item);
+            } else {
+                const element = document.createElement(type);
+                element.innerText = String(item);
+                results.appendChild(element);
+            }
+        }
+
+        function displayQuery(query) {
+            const queryDiv = document.createElement("div");
+            queryDiv.innerHTML = '<pre><code class="language-sql"></code></pre>';
+            queryDiv.querySelector('code').innerText = query;
+            display(queryDiv);
+        }
+
         function formatDateString(date) {
             const [d, m, y] = date.split(' ')[0].split('.');
             return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
         }
 
-        async function onRead({ transactions }) {
-            const patterns = await fetch("./patterns.json").then(res => res.json());
-
-            function parseRef(ref) {
-                for (let type in patterns) {
-                    for (let key in patterns[type]) {
-                        if (ref.includes(key)) {
-                            return [type, patterns[type][key]];
-                        }
+        function parseRef(ref) {
+            for (let type in patterns) {
+                for (let key in patterns[type]) {
+                    if (ref.includes(key)) {
+                        return [type, patterns[type][key]];
                     }
                 }
-                return ["other", ref];
             }
-
-            for (let account in transactions) {
-                db.transaction((txn) => {
-                    transactions[account][0][1].forEach(tx => {
-                        const date = formatDateString(tx[3]);
-                        const ref = tx[6] === tx[14] ? tx[6] : tx[6] + " " + tx[14];
-                        const sum = tx[8] === '0' ? parseFloat(tx[9]) : -1 * parseFloat(tx[8]);
-                        const [kat1, kat2] = parseRef(ref);
-                        const curr = tx[2];
-
-
-                        const sql = `INSERT OR IGNORE INTO TX (id, sum, rsum, curr, kat1, kat2, date, type, card, ref, ref2, acc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-                        txn.executeSql(sql, [tx[7], sum, sum * ratesRsd[curr], curr, kat1, kat2, date, tx[13], tx[5], ref, tx[11], account]);
-                    });
-                });
-            }
-
-            await render();
+            return ["other", ref];
         }
 
-        async function render() {
-            results.innerHTML = '';
+        function getQueries() {
+            const [initQuery, ...dash] = dashboardSQL.split('\n-- ')
+            const queries = { initQuery: initQuery };
 
-            const dashboard = await fetch("./dashboard.sql").then(res => res.text());
-            const [[, initSQL], ...dash] = dashboard.split(/\n-- /g).map(d => d.match(/([^\n]+)\n([^]+)/)).filter(Boolean).map(m => ([m[1], m[2]]));
-
-            for (let isql of initSQL.split(';').map(n => n.trim()).filter(Boolean)) {
-                const data = await new Promise((res, rej) => {
-                    db.transaction(tx => { tx.executeSql(isql, [], (_, d) => res(Array.from(d.rows)), (_, e) => rej(e)) })
-                });
-            }
-
-            for (let d of dash) {
-                await print(...d)
-            }
-
-            Prism.highlightAll()
-        }
-
-        async function print(name, query) {
-            const nameDiv = document.createElement("h3");
-            const queryDiv = document.createElement("div");
-            const dataDiv = document.createElement("div");
-            nameDiv.innerText = name;
-
-            queryDiv.innerHTML = '<pre><code class="language-sql"></code></pre>';
-            queryDiv.querySelector('code').innerText = query;
-
-            try {
-                const data = await new Promise((res, rej) => {
-                    db.readTransaction(tx => { tx.executeSql(query, [], (_, d) => res(Array.from(d.rows)), (_, e) => rej(e)) })
-                });
-
-                if (data.length == 0) {
-                    dataDiv.innerText = 'Нет данных';
-                } else {
-                    printData(data, dataDiv, name);
+            dash.forEach(item => {
+                const [name, ...lines] = item.split('\n');
+                const query = lines.join('\n').trim();
+                if (query !== '') {
+                    queries[name] = query;
                 }
-            } catch (e) {
-                dataDiv.innerText = `Error code: ${e.code}, message: ${e.message}`
-            }
+            });
 
-            results.appendChild(nameDiv);
-            results.appendChild(queryDiv);
-            results.appendChild(dataDiv);
+            return queries
         }
 
-        function generateTable(data) {
+        function displayDatePlot(df, title) {
+            const div = document.createElement('div');
+            display(div);
+
+            const dataObj = Object.fromEntries(df.values), dates = df.values.map(e => new Date(e[0]));
+            const minDate = new Date(Math.min(...dates)), maxDate = new Date(Math.max(...dates));
+            const x = [], y = [];
+
+            for (let dt = minDate; dt <= maxDate; dt.setDate(dt.getDate() + 1)) {
+                const strDate = new Date(dt).toISOString().split('T')[0];
+                x.push(strDate);
+                y.push(dataObj[strDate] || 0);
+            }
+
+            Plotly.newPlot(div, [{ type: 'scatter', mode: 'lines', x, y, line: { shape: 'linear' } }],
+                { title, xaxis: { title: '' }, yaxis: { title: '' } });
+        }
+
+        function displayTotalPie(df, title) {
+            const div = document.createElement('div');
+            display(div);
+
+            Plotly.newPlot(div, [{
+                type: 'pie',
+                labels: df.values.map(d => d[0]),
+                values: df.values.map(d => d[1]),
+                textinfo: 'value+percent'
+            }], { title });
+        }
+
+        function displayTable(df, title) {
             const table = document.createElement('table');
             const thead = document.createElement('thead');
             const headerRow = document.createElement('tr');
-            Object.keys(data[0]).forEach(header => {
+            df.columns.forEach(header => {
                 const th = document.createElement('th');
                 th.innerText = header;
                 headerRow.appendChild(th);
@@ -162,9 +162,9 @@
             table.appendChild(thead);
 
             const tbody = document.createElement('tbody');
-            data.forEach(row => {
+            df.values.forEach(row => {
                 const tr = document.createElement('tr');
-                Object.values(row).forEach(value => {
+                row.forEach(value => {
                     const td = document.createElement('td');
                     td.innerText = value;
                     tr.appendChild(td);
@@ -172,78 +172,99 @@
                 tbody.appendChild(tr);
             });
             table.appendChild(tbody);
-            return table;
+            display(table);
         }
 
-        function printData(data, dataDiv, name) {
-            if (data.length == 0) {
-                dataDiv.innerText = 'Нет данных';
-                return;
-            }
+        function dashboard(queries) {
+            for (let item in queries) {
+                try {
+                    const queryText = queries[item];
+                    const df = query(queryText);
 
-            if (Object.keys(data[0]).includes("total")) {
-                columnName = Object.keys(data[0]).filter(d => d !== 'total')[0]
-                Plotly.newPlot(dataDiv, [{
-                    type: 'pie',
-                    labels: data.map(row => row[columnName]),
-                    values: data.map(row => row['total']),
-                    textinfo: 'value+percent'
-                }], { title: name });
-                return;
-            }
+                    display(item, 'h3');
+                    displayQuery(queryText);
 
-            if (Object.keys(data[0]).includes("date")) {
-                columnName = Object.keys(data[0]).filter(d => d !== 'date')[0]
-
-                let minDate = new Date(Math.min(...data.map(e => new Date(e.date))));
-                let maxDate = new Date(Math.max(...data.map(e => new Date(e.date))));
-
-                let dateRange = [];
-                for (let dt = minDate; dt <= maxDate; dt.setDate(dt.getDate() + 1)) {
-                    dateRange.push(new Date(dt));
+                    if (!df || df.values.length === 0) {
+                        display('Нет данных')
+                    } else if (df.columns.length === 2 && df.columns[0] === 'date') {
+                        displayDatePlot(df, item);
+                    } else if (df.columns.length === 2 && df.columns[1] === 'total') {
+                        displayTotalPie(df, item);
+                    } else {
+                        displayTable(df, item);
+                    }
+                } catch (e) {
+                    console.error(e);
+                    display(`Ошибка код: ${e.code}, сообщение: ${e.message}`);
                 }
-
-                let filledData = dateRange.map(date => {
-                    let strDate = date.toISOString().split('T')[0];
-                    let existing = data.find(e => e.date === strDate);
-                    if (existing) return existing;
-                    return { date: strDate, [columnName]: 0 };
-                });
-
-                Plotly.newPlot(dataDiv, [{
-                    type: 'scatter',
-                    mode: 'lines',
-                    x: filledData.map(row => row['date']),
-                    y: filledData.map(row => row[columnName]),
-                    line: { shape: 'linear' }
-                }], { title: name, xaxis: { title: '' }, yaxis: { title: '' } });
-
-                return;
             }
 
-            dataDiv.appendChild(generateTable(data))
+            Prism.highlightAll()
         }
 
+        function query(sqlQuery) {
+            const result = db.exec(sqlQuery);
+            if (result.length === 0) { return null; }
+
+            const { columns, values } = result[result.length - 1];
+            return { columns, values };
+        }
+
+        function initDatabase(initQuery) {
+            db.exec(`CREATE TABLE IF NOT EXISTS TX (id TEXT PRIMARY KEY, sum REAL NOT NULL, rsum REAL NOT NULL, curr TEXT NOT NULL, kat1 TEXT NOT NULL, kat2 TEXT, date DATE NOT NULL, type TEXT NOT NULL, card TEXT NOT NULL, ref TEXT, ref2 TEXT, acc TEXT NOT NULL);`);
+
+            for (let file of Object.keys(localStorage).filter(k => k.startsWith('Raiff_') && k.endsWith('.json'))) {
+                const data = JSON.parse(localStorage[file]);
+                for (let account in data.transactions) {
+                    for (let tx of data.transactions[account][0][1]) {
+                        const date = formatDateString(tx[3]);
+                        const ref = tx[6] === tx[14] ? tx[6] : tx[6] + " " + tx[14];
+                        const sum = tx[8] === '0' ? parseFloat(tx[9]) : -1 * parseFloat(tx[8]);
+                        const [kat1, kat2] = parseRef(ref);
+                        const curr = tx[2];
+                        const txn = [tx[7], sum, sum * ratesRsd[curr], curr, kat1, kat2, date, tx[13], tx[5], ref, tx[11], account]
+
+                        db.exec("INSERT OR IGNORE INTO TX (id, sum, rsum, curr, kat1, kat2, date, type, card, ref, ref2, acc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", txn);
+                    }
+                }
+            }
+
+            db.exec(initQuery);
+        }
+
+        async function init() {
+            const SQL = await initSqlJs({});
+
+            patterns = await fetch("./patterns.json").then(res => res.json());
+            dashboardSQL = await fetch("./dashboard.sql").then(res => res.text());
+            db = new SQL.Database();
+
+            const { initQuery, ...queries } = getQueries();
+
+            initDatabase(initQuery);
+            dashboard(queries);
+        }
+
+        let db, patterns, dashboardSQL;
         const ratesRsd = { "RSD": 1, "EUR": 117, "USD": 110 };
-        const db = openDatabase('txns', '1.0', 'Transactions', 2e6);
-        db.transaction((tx) => {
-            tx.executeSql(`CREATE TABLE IF NOT EXISTS TX (id TEXT PRIMARY KEY, sum REAL NOT NULL, rsum REAL NOT NULL,
-                curr TEXT NOT NULL, kat1 TEXT NOT NULL, kat2 TEXT, date DATE NOT NULL, type TEXT NOT NULL,
-                card TEXT NOT NULL, ref TEXT, ref2 TEXT, acc TEXT NOT NULL);`);
-        });
-
-        document.body.innerHTML = document.querySelector('template').innerHTML;
         const results = document.querySelector("#results");
-        const input = document.querySelector('input[type=file]');
+        const fileinput = document.querySelector('input[type=file]');
 
-        document.querySelector('button').addEventListener('click', () => input.click());
-        input.addEventListener('change', ({ target }) => {
+        fileinput.addEventListener('change', ({ target }) => {
+            const file = target.files[0]
             reader = new FileReader();
-            reader.onload = ({ target }) => onRead(JSON.parse(target.result));
-            reader.readAsText(target.files[0]);
+            reader.onload = ({ target }) => {
+                try {
+                    localStorage[file.name] = target.result;
+                    location.reload()
+                } catch (e) {
+                    alert(`Ошибка: ${e}`);
+                }
+            };
+            reader.readAsText(file);
         });
 
-        render();
+        init();
     </script>
 </body>
 

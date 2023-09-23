@@ -1,6 +1,5 @@
 -- init
-DROP TABLE IF EXISTS POS;
-CREATE TEMPORARY TABLE IF NOT EXISTS POS AS SELECT id, SUM(sum) as sum, SUM(rsum) as rsum, curr, kat1, kat2,
+CREATE TABLE POS AS SELECT id, SUM(sum) as sum, SUM(rsum) as rsum, curr, kat1, kat2, 
     date, type, card, ref, ref2, acc FROM TX WHERE sum < 0 AND type = "POS" GROUP BY curr, date, type, card, ref, ref2, acc;
 
 -- По категориям
