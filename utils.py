@@ -11,6 +11,10 @@ def format_date_string(dt):
     return datetime.strptime(dt, '%d.%m.%Y %H:%M:%S').date().strftime('%Y-%m-%d')
 
 
+def format_date_time(js_unixtime):
+    return datetime.fromtimestamp(int(js_unixtime / 1000)).strftime('%Y-%m-%d %H:%M:%S')
+
+
 def parse_ref(ref):
     for type in patterns:
         for key in patterns[type]:
@@ -103,6 +107,26 @@ def init_database(init_query):
 
                 db.execute(
                     "INSERT OR IGNORE INTO TX (id, sum, rsum, curr, kat1, kat2, date, type, card, ref, ref2, acc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", txn)
+
+    db.execute("CREATE TABLE WOLT (id, total REAL NOT NULL, date DATE NOT NULL, shop TEXT NOT NULL, curr TEXT NOT NULL, count INTEGER NOT NULL, item TEXT NOT NULL, price REAL NOT NULL);")
+
+    for file in [n for n in os.listdir('.') if n.startswith("Wolt_") and n.endswith(".json")]:
+        with open(file, 'r') as file:
+            data = json.load(file)
+
+        for order in data['orders']:
+            if order['status'] != 'delivered':
+                continue
+
+            shop = order['venue_name']
+            dt = format_date_time(order['payment_time']['$date'])
+
+            for item in order['items']:
+                o = (int(order['order_number']), order['total_price'] / 100, dt, shop,
+                     order['currency'], item['count'], item['name'], item['price'] / 100)
+
+                db.execute(
+                    "INSERT INTO WOLT (id, total, date, shop, curr, count, item, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?);", o)
 
     db.executescript(init_query)
 

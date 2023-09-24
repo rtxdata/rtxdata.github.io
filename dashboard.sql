@@ -38,6 +38,12 @@ SELECT SUM(sum) / 117.3 FROM TX WHERE curr = 'RSD' AND type = 'Income';
 -- Траты по валютам
 SELECT SUM(ABS(sum)), curr FROM POS GROUP BY curr;
 
+-- Вольт по магазинам
+SELECT shop, SUM(total) as total FROM (SELECT DISTINCT(id), total, shop FROM WOLT) GROUP BY shop ORDER BY total DESC LIMIT 10;
+
+-- Самые заказываемые артикулы в макдаке
+SELECT item, SUM(count * price) as total FROM WOLT WHERE shop like '%McDonald%' GROUP BY item ORDER by total DESC LIMIT 10;
+
 -- Эффективность конвертации
 
 -- Зарубежные комиссии

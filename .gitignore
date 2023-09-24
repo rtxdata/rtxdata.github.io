@@ -4,5 +4,6 @@ __pycache__
 .venv
 .vscode
 Raiff*.json
+Wolt*.json
 temp
 private

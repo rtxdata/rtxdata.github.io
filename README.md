@@ -73,6 +73,33 @@ pip install -r requirements.txt
 2) Классификатор находится в `patterns.json` и работает как паттерн матчинг, поддерживается только 2 уровня вложенности
 3) Пожалуйста отправьте пулл реквест с новыми графиками и обновлениями классификатора если найдете что-то полезное для себя
 
+### Скачиваем заказы Вольта
+
+1) Логинимся https://wolt.com/
+2) Открываем консоль разработчика, в Chrome/Yandex/Firefox это `F12` или `Cmd + Opt + I`
+3) Вставляем в консоль скрипт
+```javascript
+token = decodeURIComponent(document.cookie).match(/__wtoken=[^,]+,"accessToken":"([^"]+)/)[1]
+orders = []
+
+for (let skip = 0; ; skip += 100) {
+    batch = await fetch("https://restaurant-api.wolt.com/v2/order_details/?limit=100&skip=" + skip,
+        { headers: { authorization: "Bearer " + token } }).then(res => res.json());
+    orders.push(...batch);
+    if (batch.length === 0) { break; }
+}
+
+element = document.createElement('a');
+element.href = URL.createObjectURL(new Blob([JSON.stringify({ orders })],
+    { type: "application/json" }));
+element.download = 'Wolt_' + new Date().toISOString() + '.json';
+element.click();
+```
+
+### Найдена уязвимость, куда писать?
+
+https://t.me/enovikov11
+
 ### Одна логика реализована на двух языках
 
 Код `index.html` и `utils.py` одинаково организован и синхронизирован, использует одинаковые библиотеки где это возможно, чтобы использовать сильные стороны языков:
@@ -82,7 +109,3 @@ pip install -r requirements.txt
 ### Можно ли выполнять кастомные запросы в браузере?
 
 Это не основная фича, но да, можно: https://rtxdata.github.io/?sql
-
-### Найдена уязвимость, куда писать?
-
-https://t.me/enovikov11

@@ -62,8 +62,8 @@
     <h3>RtxData</h3>
     <div class="content">Анализ данных из Райфайзен Банка (Сербия)</div>
     <div class="content">
-        <button onclick="fileinput.click()">Обновить данные с помощью Raiff.json</button>
-        <a href="https://github.com/rtxdata/rtxdata.github.io#скачиваем-свои-данные">Где его взять?</a>
+        <button onclick="fileinput.click()">Загрузить новые данные из json</button>
+        <a href="https://github.com/rtxdata/rtxdata.github.io#скачиваем-свои-данные">Где их взять?</a>
     </div>
     <div class="content">
         <button onclick="localStorage.clear();location.reload()">Удалить все данные</button>
@@ -96,6 +96,17 @@
         function formatDateString(date) {
             const [d, m, y] = date.split(' ')[0].split('.');
             return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+        }
+
+        function formatDateTime(date) {
+            const yyyy = date.getFullYear();
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const dd = String(date.getDate()).padStart(2, '0');
+            const hh = String(date.getHours()).padStart(2, '0');
+            const mi = String(date.getMinutes()).padStart(2, '0');
+            const ss = String(date.getSeconds()).padStart(2, '0');
+
+            return `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
         }
 
         function parseRef(ref) {
@@ -216,7 +227,7 @@
         }
 
         function initDatabase(initQuery) {
-            db.exec(`CREATE TABLE IF NOT EXISTS TX (id TEXT PRIMARY KEY, sum REAL NOT NULL, rsum REAL NOT NULL, curr TEXT NOT NULL, kat1 TEXT NOT NULL, kat2 TEXT, date DATE NOT NULL, type TEXT NOT NULL, card TEXT NOT NULL, ref TEXT, ref2 TEXT, acc TEXT NOT NULL);`);
+            db.exec(`CREATE TABLE TX (id TEXT PRIMARY KEY, sum REAL NOT NULL, rsum REAL NOT NULL, curr TEXT NOT NULL, kat1 TEXT NOT NULL, kat2 TEXT, date DATE NOT NULL, type TEXT NOT NULL, card TEXT NOT NULL, ref TEXT, ref2 TEXT, acc TEXT NOT NULL);`);
 
             for (let file of Object.keys(localStorage).filter(k => k.startsWith('Raiff_') && k.endsWith('.json'))) {
                 const data = JSON.parse(localStorage[file]);
@@ -230,6 +241,26 @@
                         const txn = [tx[7], sum, sum * ratesRsd[curr], curr, kat1, kat2, date, tx[13], tx[5], ref, tx[11], account]
 
                         db.exec("INSERT OR IGNORE INTO TX (id, sum, rsum, curr, kat1, kat2, date, type, card, ref, ref2, acc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", txn);
+                    }
+                }
+            }
+
+            db.exec(`CREATE TABLE WOLT (id, total REAL NOT NULL, date DATE NOT NULL, shop TEXT NOT NULL, curr TEXT NOT NULL, count INTEGER NOT NULL, item TEXT NOT NULL, price REAL NOT NULL);`);
+
+            for (let file of Object.keys(localStorage).filter(k => k.startsWith('Wolt_') && k.endsWith('.json'))) {
+                const { orders } = JSON.parse(localStorage[file]);
+
+                for (let { order_number, venue_name, payment_time, items, currency, total_price, status } of orders) {
+                    if (status !== 'delivered') {
+                        continue;
+                    }
+
+                    const shop = venue_name;
+                    const datetime = formatDateTime(new Date(payment_time['$date']));
+
+                    for (let { count, name, price } of items) {
+                        const order = [parseInt(order_number), total_price / 100, datetime, shop, currency, count, name, price / 100];
+                        db.exec("INSERT INTO WOLT (id, total, date, shop, curr, count, item, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?);", order);
                     }
                 }
             }
