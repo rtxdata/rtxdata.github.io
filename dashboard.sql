@@ -8,8 +8,14 @@ SELECT kat1, SUM(ABS(rsum)) as total FROM POS GROUP BY kat1 ORDER BY total DESC 
 -- Интернет
 SELECT kat2, SUM(ABS(rsum)) as total FROM POS WHERE kat1 = 'internet' GROUP BY kat2 ORDER BY total DESC LIMIT 10;
 
+-- Остальное
+SELECT kat2, SUM(ABS(rsum)) as total FROM POS WHERE kat1 = 'other' GROUP BY kat2 ORDER BY total DESC LIMIT 10;
+
 -- Траты
 SELECT date, SUM(ABS(rsum)) FROM POS GROUP BY date ORDER BY date ASC;
+
+-- Снятия наличных, в пересчете на динары
+SELECT date, sum(abs(rsum)) from TX WHERE rsum < 0 and (type like '%Cash%' OR type = 'ATM' OR ref like '%atm%') GROUP BY date;
 
 -- Транзакций в день
 SELECT date, count(*) FROM POS GROUP BY date ORDER BY date ASC;
