@@ -108,7 +108,7 @@ def init_database(init_query):
                 db.execute(
                     "INSERT OR IGNORE INTO TX (id, sum, rsum, curr, kat1, kat2, date, type, card, ref, ref2, acc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", txn)
 
-    db.execute("CREATE TABLE WOLT (id, total REAL NOT NULL, date DATE NOT NULL, shop TEXT NOT NULL, curr TEXT NOT NULL, count INTEGER NOT NULL, item TEXT NOT NULL, price REAL NOT NULL);")
+    db.execute("CREATE TABLE WOLT (id INTEGER, total REAL NOT NULL, date DATE NOT NULL, shop TEXT NOT NULL, curr TEXT NOT NULL, count INTEGER NOT NULL, item TEXT NOT NULL, price REAL NOT NULL);")
 
     for file in [n for n in os.listdir('.') if n.startswith("Wolt_") and n.endswith(".json")]:
         with open(file, 'r') as file:
@@ -127,6 +127,24 @@ def init_database(init_query):
 
                 db.execute(
                     "INSERT INTO WOLT (id, total, date, shop, curr, count, item, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?);", o)
+
+    db.execute(
+        "CREATE TABLE GLOVO (date DATE NOT NULL, shop TEXT NOT NULL, price REAL NOT NULL);")
+
+    for file in [n for n in os.listdir('.') if n.startswith("Glovo_") and n.endswith(".json")]:
+        with open(file, 'r') as file:
+            data = json.load(file)
+
+        for order in data['glovo']:
+            price = None
+            for line in order['pricingBreakdown']['lines']:
+                if line['type'] == 'TOTAL':
+                    price = float(line['amount'].replace(
+                        ",", ".").split(" ")[0])
+                    break
+
+            db.execute("INSERT INTO GLOVO (date, shop, price) VALUES (?, ?, ?);",
+                       (format_date_time(order['creationTime']), order['storeName'], price))
 
     db.executescript(init_query)
 

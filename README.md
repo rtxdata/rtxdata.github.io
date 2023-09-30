@@ -96,6 +96,30 @@ element.download = 'Wolt_' + new Date().toISOString() + '.json';
 element.click();
 ```
 
+### Скачиваем заказы Глово
+
+1) Логинимся https://glovoapp.com/
+2) Открываем консоль разработчика, в Chrome/Yandex/Firefox это `F12` или `Cmd + Opt + I`
+3) Вставляем в консоль скрипт
+```javascript
+authorization = decodeURIComponent(document.cookie).match(/glovo_auth_info={"accessToken":"([^"]+)/)[1]
+glovo = []
+batch = await fetch("https://api.glovoapp.com/v3/customer/orders-list?offset=0&limit=10000",
+    { headers: { accept: "application/json", authorization } }).then(res => res.json());
+
+for (let i = 0; i < batch.orders.length; i++) {
+    order = await fetch("https://api.glovoapp.com/v3/customer/orders/" + batch.orders[i].orderId,
+        { headers: { accept: "application/json", authorization } }).then(res => res.json());
+    glovo.push(order);
+}
+
+element = document.createElement('a');
+element.href = URL.createObjectURL(new Blob([JSON.stringify({ glovo })],
+    { type: "application/json" }));
+element.download = 'Glovo_' + new Date().toISOString() + '.json';
+element.click();
+```
+
 ### Найдена уязвимость, куда писать?
 
 https://t.me/enovikov11

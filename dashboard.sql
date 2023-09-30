@@ -41,6 +41,9 @@ SELECT SUM(ABS(sum)), curr FROM POS GROUP BY curr;
 -- Вольт по магазинам
 SELECT shop, SUM(total) as total FROM (SELECT DISTINCT(id), total, shop FROM WOLT) GROUP BY shop ORDER BY total DESC LIMIT 10;
 
+-- Глово таблица
+SELECT date, shop, price FROM GLOVO LIMIT 20;
+
 -- Самые заказываемые артикулы в макдаке
 SELECT item, SUM(count * price) as total FROM WOLT WHERE shop like '%McDonald%' GROUP BY item ORDER by total DESC LIMIT 10;
 
