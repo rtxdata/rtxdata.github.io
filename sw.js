@@ -1,7 +1,7 @@
 self.addEventListener('fetch', event => {
     event.respondWith(
         caches.open('cache').then(cache => {
-            return fetch(event.request).then(response => {
+            return fetch(event.request, { cache: 'no-cache' }).then(response => {
                 cache.put(event.request, response.clone());
                 return response;
             }).catch(() => {

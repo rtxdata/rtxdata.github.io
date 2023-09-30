@@ -136,13 +136,15 @@ def init_database(init_query):
             data = json.load(file)
 
         for order in data['glovo']:
-            price = None
             for line in order['pricingBreakdown']['lines']:
                 if line['type'] == 'TOTAL':
-                    price = float(line['amount'].replace(
-                        ",", ".").split(" ")[0])
+                    total = line['amount']
                     break
+            if " дин." not in total:
+                continue
 
+            price = float(total.replace(
+                ".", "").replace(",", ".").split(" ")[0])
             db.execute("INSERT INTO GLOVO (date, shop, price) VALUES (?, ?, ?);",
                        (format_date_time(order['creationTime']), order['storeName'], price))
 

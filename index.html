@@ -73,7 +73,7 @@
     <script>
         function handleGlobalError(e) {
             console.error(e);
-            document.body.innerText = `Ошибка: ${e}`;
+            results.innerText = `Ошибка: ${e}`;
         }
 
         function display(item, type = 'div') {
@@ -271,7 +271,10 @@
                 const { glovo } = JSON.parse(localStorage[file]);
 
                 for (let { creationTime, storeName, pricingBreakdown } of glovo) {
-                    const price = +pricingBreakdown.lines.filter(i => i.type === "TOTAL")[0].amount.replace(",", ".").split(" ")[0];
+                    const total = pricingBreakdown.lines.filter(i => i.type === "TOTAL")[0].amount;
+                    if (!total.includes(" дин.")) { continue; }
+
+                    const price = +total.replaceAll(".", "").replace(",", ".").split(" ")[0];
                     const datetime = formatDateTime(new Date(creationTime));
 
                     db.exec("INSERT INTO GLOVO (date, shop, price) VALUES (?, ?, ?);", [datetime, storeName, price]);
