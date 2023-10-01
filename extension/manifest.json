@@ -1,0 +1,32 @@
+{
+  "name": "RtxData",
+  "description": "",
+  "version": "1.0",
+  "manifest_version": 3,
+  "content_scripts": [
+    {
+      "matches": [
+        "https://rol.raiffeisenbank.rs/*",
+        "https://rtxdata.github.io/*",
+        "https://wolt.com/*"
+      ],
+      "js": [
+        "inject.js"
+      ]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "matches": [
+        "https://rol.raiffeisenbank.rs/*",
+        "https://rtxdata.github.io/*",
+        "https://wolt.com/*"
+      ],
+      "resources": [
+        "rol.raiffeisenbank.rs.js",
+        "rtxdata.github.io.js",
+        "wolt.com.js"
+      ]
+    }
+  ]
+}

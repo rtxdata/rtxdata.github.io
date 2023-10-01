@@ -73,14 +73,23 @@ pip install -r requirements.txt
 2) Классификатор находится в `patterns.json` и работает как паттерн матчинг, поддерживается только 2 уровня вложенности
 3) Пожалуйста отправьте пулл реквест с новыми графиками и обновлениями классификатора если найдете что-то полезное для себя
 
+### [Бета тест] Браузерное расширение для хрома для скачивания данных
+
+1) Клонируем репозиторий
+```bash
+git clone git@github.com:rtxdata/rtxdata.github.io.git
+```
+2) Идем на `chrome://extensions` и включаем developer mode
+3) Load unpacked -> путь до папки `extenstion` этого репозитория
+
 ### Скачиваем заказы Вольта
 
 1) Логинимся https://wolt.com/
 2) Открываем консоль разработчика, в Chrome/Yandex/Firefox это `F12` или `Cmd + Opt + I`
 3) Вставляем в консоль скрипт
 ```javascript
-token = decodeURIComponent(document.cookie).match(/__wtoken=[^,]+,"accessToken":"([^"]+)/)[1]
-orders = []
+token = decodeURIComponent(document.cookie).match(/__wtoken=[^,]+,"accessToken":"([^"]+)/)[1];
+orders = [];
 
 for (let skip = 0; ; skip += 100) {
     batch = await fetch("https://restaurant-api.wolt.com/v2/order_details/?limit=100&skip=" + skip,
@@ -103,7 +112,7 @@ element.click();
 3) Вставляем в консоль скрипт
 ```javascript
 authorization = decodeURIComponent(document.cookie).match(/glovo_auth_info={"accessToken":"([^"]+)/)[1]
-glovo = []
+glovo = [];
 batch = await fetch("https://api.glovoapp.com/v3/customer/orders-list?offset=0&limit=10000",
     { headers: { accept: "application/json", authorization } }).then(res => res.json());
 
