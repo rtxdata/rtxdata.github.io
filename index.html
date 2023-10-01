@@ -56,6 +56,11 @@
         pre {
             font-size: 12px !important;
         }
+
+        #nav {
+            display: flex;
+            flex-direction: column;
+        }
     </style>
 </head>
 
@@ -81,19 +86,27 @@
         <label for="pieNoSum">Скрыть суммы на круговых диаграммах</label>
     </div>
     <input id="fileinput" type="file" accept=".json" style="display: none;" />
+    <nav id="nav"></nav>
     <div id="results"></div>
     <script>
+        function scroll() {
+            const element = document.getElementById(decodeURIComponent(location.hash.substring(1)));
+            if (element) { element.scrollIntoView(); }
+        }
+
         function pieNoSumChanged() {
             localStorage.pieNoSum = pieNoSum.checked ? '1' : '0';
             location.reload();
         }
 
         function runCustomSql() {
-            const customQuery = prompt("Введите SQL запрос", localStorage.sql || "SELECT * FROM TX");
-            if (customQuery) {
+            const customQuery = prompt("Введите SQL запрос", localStorage.sql || "SELECT * FROM TX;");
+            if (customQuery !== null) {
                 localStorage.sql = customQuery;
                 results.innerHTML = '';
+
                 dashboard({ [customQuery]: customQuery });
+                document.querySelector("#nav").innerHTML = '';
             }
         }
 
@@ -108,8 +121,19 @@
             } else {
                 const element = document.createElement(type);
                 element.innerText = String(item);
+                element.id = String(item);
                 results.appendChild(element);
             }
+        }
+
+        function displayHeader(text) {
+            const a = document.createElement('a');
+            const h3 = document.createElement('h3');
+
+            a.innerText = h3.id = h3.innerText = text;
+            a.href = "#" + a.innerText;
+            document.querySelector("#nav").appendChild(a);
+            results.appendChild(h3);
         }
 
         function displayQuery(query) {
@@ -223,7 +247,7 @@
                     const queryText = queries[item];
                     const df = query(queryText);
 
-                    display(item, 'h3');
+                    displayHeader(item);
                     displayQuery(queryText);
 
                     if (!df || df.values.length === 0) {
@@ -241,7 +265,8 @@
                 }
             }
 
-            Prism.highlightAll()
+            Prism.highlightAll();
+            scroll();
         }
 
         function query(sqlQuery) {
