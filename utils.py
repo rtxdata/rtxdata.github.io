@@ -90,11 +90,20 @@ def query(sql_query):
 
 
 def init_database(init_query):
-    db.execute("CREATE TABLE TX (id TEXT PRIMARY KEY, sum REAL NOT NULL, rsum REAL NOT NULL, curr TEXT NOT NULL, kat1 TEXT NOT NULL, kat2 TEXT, date DATE NOT NULL, type TEXT NOT NULL, card TEXT NOT NULL, ref TEXT, ref2 TEXT, acc TEXT NOT NULL);")
+    db.execute("CREATE TABLE RaiffTxns (id TEXT PRIMARY KEY, sum REAL NOT NULL, rsum REAL NOT NULL, curr TEXT NOT NULL, kat1 TEXT NOT NULL, kat2 TEXT, date DATE NOT NULL, type TEXT NOT NULL, card TEXT NOT NULL, ref TEXT, ref2 TEXT, acc TEXT NOT NULL);")
+    db.execute("CREATE TABLE WoltItems (id INTEGER, total REAL NOT NULL, date DATE NOT NULL, shop TEXT NOT NULL, curr TEXT NOT NULL, count INTEGER NOT NULL, item TEXT NOT NULL, price REAL NOT NULL);")
+    db.execute(
+        "CREATE TABLE GlovoOrders (date DATE NOT NULL, shop TEXT NOT NULL, price REAL NOT NULL);")
 
-    for file in [n for n in os.listdir('.') if n.startswith("Raiff_") and n.endswith(".json")]:
+    for file in [n for n in os.listdir('.') if n.endswith(".json")]:
         with open(file, 'r') as file:
             data = json.load(file)
+        if not 'transactions' in data:
+            data['transactions'] = []
+        if not 'orders' in data:
+            data['orders'] = []
+        if not 'glovo' in data:
+            data['glovo'] = []
 
         for account in data['transactions']:
             for tx in data['transactions'][account][0][1]:
@@ -107,13 +116,7 @@ def init_database(init_query):
                        kat2, date, tx[13], tx[5], ref, tx[11], account)
 
                 db.execute(
-                    "INSERT OR IGNORE INTO TX (id, sum, rsum, curr, kat1, kat2, date, type, card, ref, ref2, acc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", txn)
-
-    db.execute("CREATE TABLE WOLT (id INTEGER, total REAL NOT NULL, date DATE NOT NULL, shop TEXT NOT NULL, curr TEXT NOT NULL, count INTEGER NOT NULL, item TEXT NOT NULL, price REAL NOT NULL);")
-
-    for file in [n for n in os.listdir('.') if n.startswith("Wolt_") and n.endswith(".json")]:
-        with open(file, 'r') as file:
-            data = json.load(file)
+                    "INSERT OR IGNORE INTO RaiffTxns (id, sum, rsum, curr, kat1, kat2, date, type, card, ref, ref2, acc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", txn)
 
         for order in data['orders']:
             if order['status'] != 'delivered':
@@ -127,14 +130,7 @@ def init_database(init_query):
                      order['currency'], item['count'], item['name'], item['price'] / 100)
 
                 db.execute(
-                    "INSERT INTO WOLT (id, total, date, shop, curr, count, item, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?);", o)
-
-    db.execute(
-        "CREATE TABLE GLOVO (date DATE NOT NULL, shop TEXT NOT NULL, price REAL NOT NULL);")
-
-    for file in [n for n in os.listdir('.') if n.startswith("Glovo_") and n.endswith(".json")]:
-        with open(file, 'r') as file:
-            data = json.load(file)
+                    "INSERT INTO WoltItems (id, total, date, shop, curr, count, item, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?);", o)
 
         for order in data['glovo']:
             for line in order['pricingBreakdown']['lines']:
@@ -146,9 +142,10 @@ def init_database(init_query):
 
             price = float(total.replace(
                 ".", "").replace(",", ".").split(" ")[0])
-            db.execute("INSERT INTO GLOVO (date, shop, price) VALUES (?, ?, ?);",
+            db.execute("INSERT INTO GlovoOrders (date, shop, price) VALUES (?, ?, ?);",
                        (format_date_time(order['creationTime']), order['storeName'], price))
 
+    db.create_function('dt', 1, lambda dt: True)
     db.executescript(init_query)
 
 
