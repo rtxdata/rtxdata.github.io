@@ -133,7 +133,7 @@
             const h3 = document.createElement('h3');
 
             a.innerText = h3.id = h3.innerText = text;
-            a.href = "#" + a.innerText;
+            a.href = "#" + encodeURIComponent(a.innerText);
             document.querySelector("#nav").appendChild(a);
             results.appendChild(h3);
         }
