@@ -76,9 +76,18 @@
     <div class="content">
         <button onclick="localStorage.clear();location.reload()">Очистить локальное хранилище</button>
     </div>
+    <div class="content">
+        <input type="checkbox" id="pieNoSum" onchange="pieNoSumChanged()">
+        <label for="pieNoSum">Скрыть суммы на круговых диаграммах</label>
+    </div>
     <input id="fileinput" type="file" accept=".json" style="display: none;" />
     <div id="results"></div>
     <script>
+        function pieNoSumChanged() {
+            localStorage.pieNoSum = pieNoSum.checked ? '1' : '0';
+            location.reload();
+        }
+
         function runCustomSql() {
             const customQuery = prompt("Введите SQL запрос", localStorage.sql || "SELECT * FROM TX");
             if (customQuery) {
@@ -178,7 +187,7 @@
                 type: 'pie',
                 labels: df.values.map(d => d[0]),
                 values: df.values.map(d => d[1]),
-                textinfo: 'value+percent'
+                textinfo: pieNoSum.checked ? 'percent' : 'value+percent'
             }], { title });
         }
 
@@ -333,6 +342,9 @@
 
             const results = document.querySelector("#results");
             const fileinput = document.querySelector('input[type=file]');
+            const pieNoSum = document.querySelector('#pieNoSum');
+
+            pieNoSum.checked = localStorage.pieNoSum === '1';
 
             fileinput.addEventListener('change', ({ target }) => {
                 const file = target.files[0];
