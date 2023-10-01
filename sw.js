@@ -1,3 +1,7 @@
+self.addEventListener('install', () => {
+    self.skipWaiting();
+});
+
 self.addEventListener('fetch', event => {
     return event.respondWith(
         caches.open('cache').then(cache => {
