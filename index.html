@@ -281,8 +281,18 @@
         function dashboard(queries) {
             for (let item in queries) {
                 try {
+                    const dates = new Set();
+                    db.create_function("dt", dt => {
+                        dates.add(dt.slice(0, 7));
+                        return true;
+                    });
+
                     const queryText = queries[item];
                     const df = query(queryText);
+
+                    if (dates.size > 0) {
+                        console.log(dates);
+                    }
 
                     displayHeader(item);
                     displayQuery(queryText);
