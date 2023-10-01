@@ -61,7 +61,10 @@
 
 <body>
     <h3>RtxData</h3>
-    <div class="content">Анализ данных из Райфайзен Банка (Сербия)</div>
+    <div class="content">
+        Анализ данных из Райфайзен Банка (Сербия)
+        <button onclick="runCustomSql()">Выполнить SQL</button>
+    </div>
     <div class="content" id="extension" style="display: none;">
         <button onclick="openRaiff()">Загрузить с raiffeisenbank.rs</button>
         <button onclick="openWolt()">Загрузить с wolt.com</button>
@@ -76,6 +79,15 @@
     <input id="fileinput" type="file" accept=".json" style="display: none;" />
     <div id="results"></div>
     <script>
+        function runCustomSql() {
+            const customQuery = prompt("Введите SQL запрос", localStorage.sql || "SELECT * FROM TX");
+            if (customQuery) {
+                localStorage.sql = customQuery;
+                results.innerHTML = '';
+                dashboard({ [customQuery]: customQuery });
+            }
+        }
+
         function handleGlobalError(e) {
             console.error(e);
             results.innerText = `Ошибка: ${e}`;
@@ -297,10 +309,7 @@
 
             const { initQuery, ...queries } = getQueries();
             initDatabase(initQuery);
-
-            const customQuery = location.search === '?sql' && prompt("Введите SQL запрос", localStorage.sql || "SELECT * FROM TX");
-            if (customQuery) { localStorage.sql = customQuery; }
-            dashboard(customQuery ? { [customQuery]: customQuery } : queries);
+            dashboard(queries);
         }
 
         function save(key, value) {
