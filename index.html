@@ -312,6 +312,10 @@
             }
         }
 
+        function extensionActive() {
+            document.querySelector("#extension").style.display = '';
+        }
+
         let db, patterns, dashboardSQL;
         const ratesRsd = { "RSD": 1, "EUR": 117, "USD": 110 };
 
@@ -322,15 +326,11 @@
             const fileinput = document.querySelector('input[type=file]');
 
             fileinput.addEventListener('change', ({ target }) => {
-                const file = target.files[0]
+                const file = target.files[0];
                 reader = new FileReader();
                 reader.onload = ({ target }) => save(file.name, target.result);
                 reader.readAsText(file);
             });
-
-            if ('openRaiff' in window && 'openWolt' in window && 'openGlovo' in window) {
-                document.querySelector("#extension").style.display = '';
-            }
         } catch (e) {
             handleGlobalError(e);
         }
