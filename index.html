@@ -65,7 +65,7 @@
 </head>
 
 <body>
-    <h3>RtxData</h3>
+    <h3><a href="#">RtxData</a></h3>
     <div class="content">
         Анализ данных из Райфайзен Банка (Сербия)
         <button onclick="runCustomSql()">Выполнить SQL</button>
@@ -78,6 +78,7 @@
         <button onclick="fileinput.click()">Импорт данных из json</button>
         <a href="https://github.com/rtxdata/rtxdata.github.io#скачиваем-свои-данные">Где их взять?</a>
     </div>
+    <div class="content" id="ls"></div>
     <div class="content">
         <button onclick="localStorage.clear();location.hash = '';location.reload()">Очистить локальное
             хранилище</button>
@@ -90,6 +91,40 @@
     <nav id="nav"></nav>
     <div id="results"></div>
     <script>
+        function printLs() {
+            const names = Object.keys(localStorage).filter(k => k.endsWith('.json'));
+            if (names.length === 0) { return };
+
+            for (let name of names) {
+                const div = document.createElement("div");
+
+                const dl = document.createElement("a");
+                dl.innerText = `${name}`;
+                dl.href = "#";
+                dl.addEventListener("click", () => {
+                    const element = document.createElement('a');
+                    element.href = URL.createObjectURL(new Blob([localStorage[name]], { type: "application/json" }));
+                    element.download = name;
+                    element.click();
+                });
+                div.appendChild(dl);
+
+                div.appendChild(document.createTextNode(` (${(localStorage[name].length * 2 / 1024 / 1024).toFixed(2)} MB) `));
+
+                const del = document.createElement("a");
+                del.innerText = `Удалить`;
+                del.href = "#";
+                del.addEventListener("click", () => {
+                    delete localStorage[name];
+                    location.hash = '';
+                    location.reload();
+                });
+                div.appendChild(del);
+
+                ls.appendChild(div);
+            }
+        }
+
         function scroll() {
             const element = document.getElementById(decodeURIComponent(location.hash.substring(1)));
             if (element) { element.scrollIntoView(); }
@@ -371,8 +406,10 @@
             const results = document.querySelector("#results");
             const fileinput = document.querySelector('input[type=file]');
             const pieNoSum = document.querySelector('#pieNoSum');
+            const ls = document.querySelector('#ls');
 
             pieNoSum.checked = localStorage.pieNoSum === '1';
+            printLs();
 
             fileinput.addEventListener('change', ({ target }) => {
                 const file = target.files[0];
