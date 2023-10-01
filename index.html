@@ -214,7 +214,7 @@
                 labels: df.values.map(d => d[0]),
                 values: df.values.map(d => d[1]),
                 textinfo: pieNoSum.checked ? 'percent' : 'value+percent'
-            }], { title });
+            }], { title, width: 700 });
         }
 
         function displayTable(df, title) {
