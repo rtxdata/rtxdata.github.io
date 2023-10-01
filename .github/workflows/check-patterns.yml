@@ -1,0 +1,21 @@
+name: Check patterns.json is lowercase-formated
+
+on:
+  pull_request:
+    paths:
+      - 'patterns.json'
+
+jobs:
+  format-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Run Format Check
+        run: python3 format.py --dry-run

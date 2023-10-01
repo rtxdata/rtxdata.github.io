@@ -100,7 +100,7 @@ def init_database(init_query):
                 date = format_date_string(tx[3])
                 ref = tx[6] if tx[6] == tx[14] else tx[6] + " " + tx[14]
                 sum = float(tx[9]) if tx[8] == '0' else -1 * float(tx[8])
-                (kat1, kat2) = parse_ref(ref)
+                (kat1, kat2) = parse_ref(ref.lower())
                 curr = tx[2]
                 txn = (tx[7], sum, sum * rates_rsd[curr], curr, kat1,
                        kat2, date, tx[13], tx[5], ref, tx[11], account)

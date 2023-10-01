@@ -289,7 +289,7 @@
                         const date = formatDateString(tx[3]);
                         const ref = tx[6] === tx[14] ? tx[6] : tx[6] + " " + tx[14];
                         const sum = tx[8] === '0' ? parseFloat(tx[9]) : -1 * parseFloat(tx[8]);
-                        const [kat1, kat2] = parseRef(ref);
+                        const [kat1, kat2] = parseRef(ref.toLowerCase());
                         const curr = tx[2];
                         const txn = [tx[7], sum, sum * ratesRsd[curr], curr, kat1, kat2, date, tx[13], tx[5], ref, tx[11], account]
 
