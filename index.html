@@ -30,7 +30,7 @@
         }
 
         .content {
-            margin: 1em 0;
+            margin: 10px 0;
         }
 
         table {
@@ -61,8 +61,13 @@
 <body>
     <h3>RtxData</h3>
     <div class="content">Анализ данных из Райфайзен Банка (Сербия)</div>
+    <div class="content" id="extension" style="display: none;">
+        <button onclick="openRaiff()">Загрузить с raiffeisenbank.rs</button>
+        <button onclick="openWolt()">Загрузить с wolt.com</button>
+        <button onclick="openGlovo()">Загрузить с glovoapp.com</button>
+    </div>
     <div class="content">
-        <button onclick="fileinput.click()">Загрузить новые данные из json</button>
+        <button onclick="fileinput.click()">Импорт данных из json</button>
         <a href="https://github.com/rtxdata/rtxdata.github.io#скачиваем-свои-данные">Где их взять?</a>
     </div>
     <div class="content">
@@ -298,6 +303,15 @@
             dashboard(customQuery ? { [customQuery]: customQuery } : queries);
         }
 
+        function save(key, value) {
+            try {
+                localStorage[key] = value;
+                location.reload();
+            } catch (e) {
+                handleGlobalError(e);
+            }
+        }
+
         let db, patterns, dashboardSQL;
         const ratesRsd = { "RSD": 1, "EUR": 117, "USD": 110 };
 
@@ -310,16 +324,13 @@
             fileinput.addEventListener('change', ({ target }) => {
                 const file = target.files[0]
                 reader = new FileReader();
-                reader.onload = ({ target }) => {
-                    try {
-                        localStorage[file.name] = target.result;
-                        location.reload();
-                    } catch (e) {
-                        handleGlobalError(e);
-                    }
-                };
+                reader.onload = ({ target }) => save(file.name, target.result);
                 reader.readAsText(file);
             });
+
+            if ('openRaiff' in window && 'openWolt' in window && 'openGlovo' in window) {
+                document.querySelector("#extension").style.display = '';
+            }
         } catch (e) {
             handleGlobalError(e);
         }
