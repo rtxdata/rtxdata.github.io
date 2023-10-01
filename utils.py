@@ -54,6 +54,7 @@ def display_total_pie(df, title):
     columns = df.columns.tolist()
     fig = px.pie(df, names=columns[0], values='total', title=title)
     fig.update_traces(textinfo='value+percent')
+    fig.update_layout(width=700)
     display(fig)
 
 
