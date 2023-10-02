@@ -152,34 +152,6 @@
             results.innerText = `Ошибка: ${e}`;
         }
 
-        function display(item, type = 'div') {
-            if (item instanceof HTMLElement) {
-                results.appendChild(item);
-            } else {
-                const element = document.createElement(type);
-                element.innerText = String(item);
-                element.id = String(item);
-                results.appendChild(element);
-            }
-        }
-
-        function displayHeader(text) {
-            const a = document.createElement('a');
-            const h3 = document.createElement('h3');
-
-            a.innerText = h3.id = h3.innerText = text;
-            a.href = "#" + encodeURIComponent(a.innerText);
-            document.querySelector("#nav").appendChild(a);
-            results.appendChild(h3);
-        }
-
-        function displayQuery(query) {
-            const queryDiv = document.createElement("div");
-            queryDiv.innerHTML = '<pre><code class="language-sql"></code></pre>';
-            queryDiv.querySelector('code').innerText = query;
-            display(queryDiv);
-        }
-
         function formatDateString(date) {
             const [d, m, y] = date.split(' ')[0].split('.');
             return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
@@ -222,10 +194,32 @@
             return queries
         }
 
-        function displayDatePlot(df, title) {
-            const div = document.createElement('div');
-            display(div);
+        function element(item, type = 'div') {
+            const element = document.createElement(type);
+            element.innerText = String(item);
+            element.id = String(item);
+            return element;
+        }
 
+        function headerElement(text) {
+            const a = document.createElement('a');
+            const h3 = document.createElement('h3');
+
+            a.innerText = h3.id = h3.innerText = text;
+            a.href = "#" + encodeURIComponent(a.innerText);
+            document.querySelector("#nav").appendChild(a);
+            return h3;
+        }
+
+        function queryElement(query) {
+            const queryDiv = document.createElement("div");
+            queryDiv.innerHTML = '<pre><code class="language-sql"></code></pre>';
+            queryDiv.querySelector('code').innerText = query;
+            return queryDiv;
+        }
+
+        function datePlotElement(df, title) {
+            const div = document.createElement('div');
             const dataObj = Object.fromEntries(df.values), dates = df.values.map(e => new Date(e[0]));
             const minDate = new Date(Math.min(...dates)), maxDate = new Date(Math.max(...dates));
             const x = [], y = [];
@@ -238,11 +232,11 @@
 
             Plotly.newPlot(div, [{ type: 'scatter', mode: 'lines', x, y, line: { shape: 'linear' } }],
                 { title, xaxis: { title: '' }, yaxis: { title: '' } });
+            return div;
         }
 
-        function displayTotalPie(df, title) {
+        function totalPieElement(df, title) {
             const div = document.createElement('div');
-            display(div);
 
             Plotly.newPlot(div, [{
                 type: 'pie',
@@ -250,9 +244,11 @@
                 values: df.values.map(d => d[1]),
                 textinfo: pieNoSum.checked ? 'percent' : 'value+percent'
             }], { title, width: 700 });
+
+            return div;
         }
 
-        function displayTable(df, title) {
+        function tableElement(df, title) {
             const table = document.createElement('table');
             const thead = document.createElement('thead');
             const headerRow = document.createElement('tr');
@@ -275,40 +271,79 @@
                 tbody.appendChild(tr);
             });
             table.appendChild(tbody);
-            display(table);
+            return table;
+        }
+
+        function dataElement(queryText, name, overrides) {
+            try {
+                for (let key in overrides) {
+                    db.create_function(key, overrides[key]);
+                }
+
+                const df = query(queryText);
+                if (!df || df.values.length === 0) {
+                    return (element('Нет данных'));
+                } else if (df.columns.length === 2 && df.columns[0] === 'date') {
+                    return (datePlotElement(df, name));
+                } else if (df.columns.length === 2 && df.columns[1] === 'total') {
+                    return (totalPieElement(df, name));
+                } else {
+                    return (tableElement(df, name));
+                }
+            } catch (e) {
+                console.error(e);
+                return (element(`Ошибка ${e}`));
+            }
         }
 
         function dashboard(queries) {
             for (let item in queries) {
-                try {
-                    const dates = new Set();
-                    db.create_function("dt", dt => {
-                        dates.add(dt.slice(0, 7));
+                const queryText = queries[item];
+                const container = document.createElement("div");
+                results.appendChild(container);
+
+                container.appendChild(headerElement(item));
+                container.appendChild(queryElement(queryText));
+
+                const filter = document.createElement("div");
+                container.appendChild(filter);
+
+                const res = document.createElement("div");
+                container.appendChild(res);
+
+                function setResult(overrides) {
+                    res.innerHTML = '';
+                    res.appendChild(dataElement(queryText, item, overrides));
+                }
+
+                const dates = new Set();
+                setResult({
+                    dt(val) {
+                        dates.add(val.slice(0, 7));
                         return true;
+                    }
+                });
+
+                if (dates.size > 0) {
+                    const datesArr = ['all', ...Array.from(dates).sort()];
+                    const select = document.createElement('select');
+                    select.addEventListener('change', ({ target }) => {
+                        setResult({
+                            dt(val) {
+                                dates.add();
+                                return target.value === 'all' || val.slice(0, 7) === target.value;
+                            }
+                        });
                     });
 
-                    const queryText = queries[item];
-                    const df = query(queryText);
+                    datesArr.forEach(opt => {
+                        const option = document.createElement('option');
+                        option.text = option.value = opt;
+                        select.appendChild(option);
+                    });
 
-                    if (dates.size > 0) {
-                        console.log(dates);
-                    }
-
-                    displayHeader(item);
-                    displayQuery(queryText);
-
-                    if (!df || df.values.length === 0) {
-                        display('Нет данных')
-                    } else if (df.columns.length === 2 && df.columns[0] === 'date') {
-                        displayDatePlot(df, item);
-                    } else if (df.columns.length === 2 && df.columns[1] === 'total') {
-                        displayTotalPie(df, item);
-                    } else {
-                        displayTable(df, item);
-                    }
-                } catch (e) {
-                    console.error(e);
-                    display(`Ошибка ${e}`);
+                    filter.innerText = "Дата:"
+                    filter.appendChild(select);
                 }
             }
 
@@ -363,7 +398,6 @@
                 }
             }
 
-            db.create_function("dt", dt => true);
             db.exec(initQuery);
         }
 
