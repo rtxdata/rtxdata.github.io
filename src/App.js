@@ -14,6 +14,11 @@ export default function App() {
             Анализ данных из Райфайзен Банка (Сербия)
             <CustomSql setOverrides={setOverrides} />
         </div>
+        <div class="content">
+            <a href="https://chrome.google.com/webstore/detail/beta-rtxdata-assistant/djmfdajhgfpglhghcmapiannlloimpib" target="_blank">
+                Расширение для скачивания данных
+            </a>
+        </div>
         <ExtensionButtons />
         <Storage />
         <HideSum />

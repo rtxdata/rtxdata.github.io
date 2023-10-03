@@ -1,20 +1,20 @@
 ### RTXData Privacy Policy
 
-**Last Updated: October 2, 2023**
+**Last Updated: October 3, 2023**
 
 This Privacy Policy describes how RTXData (“we”, “our”, or “us”) collects, uses, and safeguards information obtained from users (each, a “User”) of the rtxdata.github.io website (“Site”) and RTXData browser extension for Chrome (“Extension”), and any services offered in connection with the Site and Extension (collectively, the “Services”).
 
 **1. Information We Collect**
 
-Our Services allow users to analyse spending in Raiffeisen Bank (Serbia). The Extension enables the gathering of transaction data from Raiffeisen Bank, Wolt (a food delivery service), Glovo (a food delivery service), and upload this data to the Site. We collect information that could identify an individual, such as financial and location data, stored locally on the user’s device, and do not transfer it to any servers or third parties, except as stated below in Section 2. 
+Our Services allow users to analyze spending in Raiffeisen Bank (Serbia). The Extension enables the gathering of transaction data from Raiffeisen Bank, Wolt (a food delivery service), Glovo (a food delivery service), and upload this data to the Site. We collect information that could identify an individual, such as financial and location data, stored locally on the user’s device, and do not transfer it to any servers or third parties, except as stated below in Section 2. 
 
 **2. Use of Information**
 
 We primarily use the information collected to provide and improve the Services and to enable users to enjoy and easily navigate the Site and Extension. If a user selects transaction classification through AI, anonymized references of transactions will be transferred to our server for classification. This only occurs with explicit user confirmation.
 
-**3. Data Storage and sharing of Information**
+**3. Data Storage and Sharing of Information**
 
-All the user data gathered by our Services by default is stored locally on the user’s device and is not transmitted to our servers or any third-party servers, ensuring the privacy and security of user data. We do not share user’s personal, financial and location information with third parties, unless the user has explicitly confirmed to utilize the AI classification feature. Even in such a case, the transaction data is anonymized to protect user privacy. That data may be used for classifier improvement that is publicly available.
+All the user data gathered by our Services by default is stored locally on the user’s device and is not transmitted to our servers or any third-party servers, ensuring the privacy and security of user data. We do not share user’s personal, financial, and location information with third parties unless the user has explicitly confirmed to utilize the AI classification feature. Even in such a case, the transaction data is anonymized to protect user privacy. That data may be used for classifier improvement that is publicly available.
 
 **4. User Consent**
 
@@ -30,7 +30,7 @@ We may update this Privacy Policy from time to time. While we may post the new P
 
 **7. Contact Us**
 
-If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us by sending pull request to our GitHub repository at https://github.com/rtxdata/rtxdata.github.io or by opening an issue.
+If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us by sending a pull request to our GitHub repository at https://github.com/rtxdata/rtxdata.github.io or by opening an issue.
 
 **8. Governing Law**
 
