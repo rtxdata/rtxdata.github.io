@@ -8,28 +8,6 @@ import Header from './Header';
 
 import './index.css';
 
-window.scroll = function () {
-  const element = document.getElementById(decodeURIComponent(location.hash.substring(1)));
-  if (element) { element.scrollIntoView(); }
-}
-
-window.pieNoSumChanged = function () {
-  localStorage.pieNoSum = pieNoSum.checked ? '1' : '0';
-  location.hash = '';
-  location.reload();
-}
-
-window.runCustomSql = function () {
-  const customQuery = prompt("Введите SQL запрос", localStorage.sql || "SELECT * FROM RaiffTxns;");
-  if (customQuery !== null) {
-    localStorage.sql = customQuery;
-    results.innerHTML = '';
-
-    dashboard({ [customQuery]: customQuery });
-    document.querySelector("#nav").innerHTML = '';
-  }
-}
-
 window.getQueries = async function () {
   const dashboardSQL = await fetch(dashboardSQLPath).then((response) => response.text())
   const [initQuery, ...dash] = dashboardSQL.split('\n-- ')
@@ -200,7 +178,8 @@ window.dashboard = function (queries) {
   }
 
   Prism.highlightAll();
-  scroll();
+  const element = document.getElementById(decodeURIComponent(location.hash.substring(1)));
+  if (element) { element.scrollIntoView(); }
 }
 
 window.query = function (sqlQuery) {
@@ -262,8 +241,8 @@ window.init = async function () {
   dashboard(queries);
 }
 
+// API!
 window.save = function (key, value) {
-
   localStorage[key] = value;
   location.hash = '';
   location.reload();
