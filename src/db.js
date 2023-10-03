@@ -48,7 +48,7 @@ async function getQueries() {
 
 export async function getDB() {
     const { initQuery, ...queries } = await getQueries();
-    const SQL = await initSqlJs({});
+    const SQL = await window.initSqlJs({});
     const db = new SQL.Database();
 
     db.exec(`CREATE TABLE RaiffTxns (id TEXT PRIMARY KEY, sum REAL NOT NULL, rsum REAL NOT NULL, curr TEXT NOT NULL, kat1 TEXT NOT NULL, kat2 TEXT, date DATE NOT NULL, type TEXT NOT NULL, card TEXT NOT NULL, ref TEXT, ref2 TEXT, acc TEXT NOT NULL);`);
