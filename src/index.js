@@ -1,11 +1,12 @@
 /* eslint-disable */
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
+import Header from './Header';
 import './index.css';
-import patterns from './patterns.json';
-import dashboardSQLPath from './dashboard.sql';
 
-window.ratesRsd = { "RSD": 1, "EUR": 117, "USD": 110 };
+import dashboardSQLPath from './dashboard.sql';
+import { ratesRsd, formatDateString, formatDateTime, parseRef } from './utils';
+
 
 window.printLs = function () {
   const names = Object.keys(localStorage).filter(k => k.endsWith('.json'));
@@ -63,37 +64,11 @@ window.runCustomSql = function () {
   }
 }
 
-window.handleGlobalError = function (e) {
-  console.error(e);
-  results.innerText = `Ошибка: ${e}`;
-}
 
-window.formatDateString = function (date) {
-  const [d, m, y] = date.split(' ')[0].split('.');
-  return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
-}
 
-window.formatDateTime = function (date) {
-  const yyyy = date.getFullYear();
-  const mm = String(date.getMonth() + 1).padStart(2, '0');
-  const dd = String(date.getDate()).padStart(2, '0');
-  const hh = String(date.getHours()).padStart(2, '0');
-  const mi = String(date.getMinutes()).padStart(2, '0');
-  const ss = String(date.getSeconds()).padStart(2, '0');
 
-  return `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
-}
 
-window.parseRef = function (ref) {
-  for (let type in patterns) {
-    for (let key in patterns[type]) {
-      if (ref.includes(key)) {
-        return [type, patterns[type][key]];
-      }
-    }
-  }
-  return ["other", ref];
-}
+
 
 window.getQueries = async function () {
   const dashboardSQL = await fetch(dashboardSQLPath).then((response) => response.text())
@@ -328,13 +303,12 @@ window.init = async function () {
 }
 
 window.save = function (key, value) {
-  try {
-    localStorage[key] = value;
-    location.hash = '';
-    location.reload();
-  } catch (e) {
-    handleGlobalError(e);
-  }
+
+  localStorage[key] = value;
+  location.hash = '';
+  location.reload();
+
+
 }
 
 window.extensionActive = function () {
@@ -346,60 +320,35 @@ function Init() {
   useEffect(() => {
     if (window.inited) { return; }
     window.inited = true;
-    try {
-      // navigator?.serviceWorker?.register('/sw.js');
 
-      window.results = document.querySelector("#results");
-      window.fileinput = document.querySelector('input[type=file]');
-      window.pieNoSum = document.querySelector('#pieNoSum');
-      window.ls = document.querySelector('#ls');
 
-      pieNoSum.checked = localStorage.pieNoSum === '1';
-      printLs();
 
-      fileinput.addEventListener('change', ({ target }) => {
-        const file = target.files[0];
-        const reader = new FileReader();
-        reader.onload = ({ target }) => save(file.name, target.result);
-        reader.readAsText(file);
-      });
-    } catch (e) {
-      handleGlobalError(e);
-    }
+    window.results = document.querySelector("#results");
+    window.fileinput = document.querySelector('input[type=file]');
+    window.pieNoSum = document.querySelector('#pieNoSum');
+    window.ls = document.querySelector('#ls');
 
-    init().catch(handleGlobalError);
+    pieNoSum.checked = localStorage.pieNoSum === '1';
+    printLs();
+
+    fileinput.addEventListener('change', ({ target }) => {
+      const file = target.files[0];
+      const reader = new FileReader();
+      reader.onload = ({ target }) => save(file.name, target.result);
+      reader.readAsText(file);
+    });
+
+
+    init();
   }, [])
 }
+
+navigator?.serviceWorker?.register('/sw.js');
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <Init />
-    <h3><a href="#">RtxData</a></h3>
-    <div className="content">
-      Анализ данных из Райфайзен Банка (Сербия)
-      <button onClick={() => window.runCustomSql()}>Выполнить SQL</button>
-    </div>
-    <div className="content" id="extension" style={{ display: 'none' }}>
-      <button onClick={() => window.openRaiff()}>Загрузить с raiffeisenbank.rs</button>
-      <button onClick={() => window.openWolt()}>Загрузить с wolt.com</button>
-    </div>
-    <div className="content">
-      <button onClick={() => window.fileinput.click()}>Импорт данных из json</button>
-      <a href="https://github.com/rtxdata/rtxdata.github.io#скачиваем-свои-данные">Где их взять?</a>
-    </div>
-    <div className="content" id="ls"></div>
-    <div className="content">
-      <button onClick={() => {
-        localStorage.clear(); location.hash = ''; location.reload()
-      }}>Очистить локальное хранилище</button>
-    </div>
-    <div className="content">
-      <input type="checkbox" id="pieNoSum" onChange={() => window.pieNoSumChanged()} />
-      <label htmlFor="pieNoSum">Скрыть суммы на круговых диаграммах</label>
-    </div>
-    <input id="fileinput" type="file" accept=".json" style={{ display: 'none' }} />
-    <nav id="nav"></nav>
-    <div id="results"></div>
+    <Header />
   </React.StrictMode >
 );
