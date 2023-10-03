@@ -1,6 +1,6 @@
 import React from 'react';
 
-function LocalStorageItems() {
+export default function LocalStorageItems() {
     const names = Object.keys(localStorage).filter(k => k.endsWith('.json'));
 
     const downloadItem = name => {
@@ -32,5 +32,3 @@ function LocalStorageItems() {
         </div>
     );
 }
-
-export default LocalStorageItems;

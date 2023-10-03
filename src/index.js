@@ -1,14 +1,12 @@
 /* eslint-disable */
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
-import Header from './Header';
-import './index.css';
 
 import dashboardSQLPath from './dashboard.sql';
 import { ratesRsd, formatDateString, formatDateTime, parseRef } from './utils';
+import Header from './Header';
 
-
-
+import './index.css';
 
 window.scroll = function () {
   const element = document.getElementById(decodeURIComponent(location.hash.substring(1)));
@@ -31,12 +29,6 @@ window.runCustomSql = function () {
     document.querySelector("#nav").innerHTML = '';
   }
 }
-
-
-
-
-
-
 
 window.getQueries = async function () {
   const dashboardSQL = await fetch(dashboardSQLPath).then((response) => response.text())
@@ -275,21 +267,12 @@ window.save = function (key, value) {
   localStorage[key] = value;
   location.hash = '';
   location.reload();
-
-
 }
-
-window.extensionActive = function () {
-  document.querySelector("#extension").style.display = '';
-}
-
 
 function Init() {
   useEffect(() => {
     if (window.inited) { return; }
     window.inited = true;
-
-
 
     window.results = document.querySelector("#results");
     window.fileinput = document.querySelector('input[type=file]');
@@ -304,7 +287,6 @@ function Init() {
       reader.onload = ({ target }) => save(file.name, target.result);
       reader.readAsText(file);
     });
-
 
     init();
   }, [])
