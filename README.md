@@ -8,9 +8,9 @@
 
 ### Скачиваем свои данные
 
-#### Удобный способ (Райфайзен, Вольт)
+#### Удобный способ на компе или Android (Райфайзен, Вольт)
 
-1) Открываем Chrome/Yandex/Chromium
+1) Открываем Chrome/Yandex/Chromium на компе или Yandex Browser на Android
 2) Устанавливаем расширение [[beta] RtxData Assistant](https://chrome.google.com/webstore/detail/beta-rtxdata-assistant/djmfdajhgfpglhghcmapiannlloimpib)
 3) Открываем https://rtxdata.github.io/
 4) Жмем `Загрузить с raiffeisenbank.rs` / `Загрузить с wolt.com`
