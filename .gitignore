@@ -8,3 +8,4 @@ Wolt*.json
 Glovo*.json
 temp
 private
+node_modules
