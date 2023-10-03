@@ -4,9 +4,20 @@
 - Приватный: Данные остаются на устройстве
 - Удобный: Работает в браузере
 
-![Demo](./demo.png)
+<img src="./demo.png" alt="Demo" style="max-width: 600px;">
 
 ### Скачиваем свои данные
+
+#### Удобный способ (Райфайзен, Вольт)
+
+1) Открываем Chrome/Yandex/Chromium
+2) Устанавливаем расширение [[beta] RtxData Assistant](https://chrome.google.com/webstore/detail/beta-rtxdata-assistant/djmfdajhgfpglhghcmapiannlloimpib)
+3) Открываем https://rtxdata.github.io/
+4) Жмем `Загрузить с raiffeisenbank.rs` / `Загрузить с wolt.com`
+5) Логинимся
+6) Выгрузка в rtxdata начнется автоматически
+
+#### Верифицируемый способ (Райфайзен)
 
 1) Логинимся в личном кабинете https://rol.raiffeisenbank.rs/Retail/Home/Login
 2) Открываем консоль разработчика, в Chrome/Yandex/Firefox это `F12` или `Cmd + Opt + I`
@@ -72,15 +83,6 @@ pip install -r requirements.txt
 1) Запросы находятся в `dashboard.sql`, `init` выполняется перед всеми и нужен для вспомогательных таблиц
 2) Классификатор находится в `patterns.json` и работает как паттерн матчинг, поддерживается только 2 уровня вложенности
 3) Пожалуйста отправьте пулл реквест с новыми графиками и обновлениями классификатора если найдете что-то полезное для себя
-
-### [Бета тест] Браузерное расширение для хрома для скачивания данных
-
-1) Клонируем репозиторий
-```bash
-git clone git@github.com:rtxdata/rtxdata.github.io.git
-```
-2) Идем на `chrome://extensions` и включаем developer mode
-3) Load unpacked -> путь до папки `extenstion` этого репозитория
 
 ### Скачиваем заказы Вольта
 
