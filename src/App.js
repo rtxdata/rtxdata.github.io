@@ -1,30 +1,60 @@
-/* eslint-disable */
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
+
 import LocalStorageItems from './LocalStorageItems';
 import ExtensionButtons from './ExtensionButtons';
 
-export default function Header() {
+import { getDB } from './db';
+
+export default function App() {
+    useEffect(() => {
+        (async () => {
+            if (window.inited) { return; }
+            window.inited = true;
+
+            window.results = document.querySelector("#results");
+            window.fileinput = document.querySelector('input[type=file]');
+            window.pieNoSum = document.querySelector('#pieNoSum');
+            window.ls = document.querySelector('#ls');
+
+            window.pieNoSum.checked = localStorage.pieNoSum === '1';
+
+
+            window.fileinput.addEventListener('change', ({ target }) => {
+                const file = target.files[0];
+                const reader = new FileReader();
+                // eslint-disable-next-line no-undef
+                reader.onload = ({ target }) => save(file.name, target.result);
+                reader.readAsText(file);
+            });
+
+            const { db, queries } = await getDB();
+            window.db = db;
+
+            window.dashboard(queries);
+        })();
+    }, []);
+
     const runCustomSql = useCallback(() => {
         const customQuery = prompt("Введите SQL запрос", localStorage.sql || "SELECT * FROM RaiffTxns;");
         if (customQuery !== null) {
             localStorage.sql = customQuery;
-            results.innerHTML = '';
+            window.results.innerHTML = '';
 
-            dashboard({ [customQuery]: customQuery });
+            window.dashboard({ [customQuery]: customQuery });
             document.querySelector("#nav").innerHTML = '';
         }
     });
 
     const clearLS = useCallback(() => {
         localStorage.clear();
-        location.hash = '';
-        location.reload();
+        window.location.hash = '';
+        window.location.reload();
     });
 
     const pieNoSumChanged = useCallback(() => {
-        localStorage.pieNoSum = pieNoSum.checked ? '1' : '0';
-        location.hash = '';
-        location.reload();
+        localStorage.pieNoSum = window.pieNoSum.checked ? '1' : '0';
+        window.location.hash = '';
+        window.location.reload();
     });
 
     return <>
