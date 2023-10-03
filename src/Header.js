@@ -1,5 +1,6 @@
 /* eslint-disable */
 import React from 'react';
+import LocalStorageItems from './LocalStorageItems';
 
 export default function Header() {
     return (<><h3><a href="#">RtxData</a></h3>
@@ -15,7 +16,7 @@ export default function Header() {
             <button onClick={() => window.fileinput.click()}>Импорт данных из json</button>
             <a href="https://github.com/rtxdata/rtxdata.github.io#скачиваем-свои-данные">Где их взять?</a>
         </div>
-        <div className="content" id="ls"></div>
+        <LocalStorageItems />
         <div className="content">
             <button onClick={() => {
                 localStorage.clear(); location.hash = ''; location.reload()

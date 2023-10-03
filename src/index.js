@@ -8,39 +8,7 @@ import dashboardSQLPath from './dashboard.sql';
 import { ratesRsd, formatDateString, formatDateTime, parseRef } from './utils';
 
 
-window.printLs = function () {
-  const names = Object.keys(localStorage).filter(k => k.endsWith('.json'));
-  if (names.length === 0) { return };
 
-  for (let name of names) {
-    const div = document.createElement("div");
-
-    const dl = document.createElement("a");
-    dl.innerText = `${name}`;
-    dl.href = "#";
-    dl.addEventListener("click", () => {
-      const element = document.createElement('a');
-      element.href = URL.createObjectURL(new Blob([localStorage[name]], { type: "application/json" }));
-      element.download = name;
-      element.click();
-    });
-    div.appendChild(dl);
-
-    div.appendChild(document.createTextNode(` (${(localStorage[name].length * 2 / 1024 / 1024).toFixed(2)} MB) `));
-
-    const del = document.createElement("a");
-    del.innerText = `Удалить`;
-    del.href = "#";
-    del.addEventListener("click", () => {
-      delete localStorage[name];
-      location.hash = '';
-      location.reload();
-    });
-    div.appendChild(del);
-
-    ls.appendChild(div);
-  }
-}
 
 window.scroll = function () {
   const element = document.getElementById(decodeURIComponent(location.hash.substring(1)));
@@ -329,7 +297,6 @@ function Init() {
     window.ls = document.querySelector('#ls');
 
     pieNoSum.checked = localStorage.pieNoSum === '1';
-    printLs();
 
     fileinput.addEventListener('change', ({ target }) => {
       const file = target.files[0];
