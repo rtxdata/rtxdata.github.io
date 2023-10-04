@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Plotly from 'react-plotly.js';
+import { Context } from './Context';
 
-export default function Pie({ df, title, hideSum }) {
+export default function Pie({ df, title }) {
+    const { hideSum } = useContext(Context);
+
     return <Plotly data={[{
         type: 'pie',
         labels: df.values.map(d => d[0]),

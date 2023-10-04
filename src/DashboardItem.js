@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
+import { Context } from './Context';
 import DataElement from './DataElement';
 
-export default function DashboardItem({ name, query, db, hideSum }) {
+export default function DashboardItem({ name, query }) {
+    const { db } = useContext(Context);
     const [df, setDf] = useState(null);
     const [filterValues, setFilterValues] = useState([]);
     const [selected, setSelected] = useState('all');
@@ -10,27 +12,19 @@ export default function DashboardItem({ name, query, db, hideSum }) {
     useEffect(() => {
         const usedDates = new Set();
 
-        const overrides = {
+        const result = db.run(query, {
             dt(val) {
                 const value = val.slice(0, 7);
                 usedDates.add(value);
                 return selected === 'all' || selected === value;
             }
-        };
+        });
 
-        for (let key in overrides) {
-            db.create_function(key, overrides[key]);
-        }
-
-        const result = db.exec(query);
         setDf(result.length === 0 ? null : result[result.length - 1]);
 
         if (usedDates.size > 0) { setFilterValues(["all", ...Array.from(usedDates).sort()]); }
 
-        if (filterValues.length === 0) {
-            setFilterValues(Array.from(usedDates).sort());
-        }
-
+        if (filterValues.length === 0) { setFilterValues(Array.from(usedDates).sort()); }
     }, [name, query, selected, filterValues.length, db]);
 
     return (
@@ -47,7 +41,7 @@ export default function DashboardItem({ name, query, db, hideSum }) {
                     </select>
                 </div>
             )}
-            <DataElement df={df} name={name} hideSum={hideSum} />
+            <DataElement df={df} name={name} />
         </div>
     );
 }

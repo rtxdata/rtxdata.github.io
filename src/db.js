@@ -91,5 +91,10 @@ export async function getDB() {
 
     db.exec(initQuery);
 
-    return { db, queries };
+    function run(query, overrides = {}) {
+        for (let key in overrides) { db.create_function(key, overrides[key]); }
+        return db.exec(query);
+    }
+
+    return { run, queries };
 }

@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import DashboardItem from './DashboardItem';
+import { Context } from './Context';
 
-export default function Dashboard({ db, queries, hideSum }) {
+export default function Dashboard({ overrides }) {
+    const { db } = useContext(Context);
     useEffect(() => {
         window.Prism.highlightAll();
 
@@ -9,14 +11,14 @@ export default function Dashboard({ db, queries, hideSum }) {
         if (elem) { elem.scrollIntoView(); }
     }, [db]);
 
+    if (!db) { return "Загрузка..."; }
+
+    const entries = Object.entries(overrides || db.queries);
+
     return (
         <>
-            <nav id="nav">
-                {Object.keys(queries).map(name => <a key={name} href={"#" + encodeURIComponent(name)}>{name}</a>)}
-            </nav>
-            {Object.entries(queries).map(([name, query]) => (
-                <DashboardItem key={name} name={name} query={query} db={db} hideSum={hideSum} />
-            ))}
+            <nav id="nav">{entries.map(([name]) => <a key={name} href={"#" + encodeURIComponent(name)}>{name}</a>)}</nav>
+            {entries.map(([name, query]) => <DashboardItem key={name} name={name} query={query} />)}
         </>
     );
 }
