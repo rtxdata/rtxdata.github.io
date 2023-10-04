@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import DashboardItem from './DashboardItem';
 
-export default function Dashboard({ db, hideSum }) {
+export default function Dashboard({ db, queries, hideSum }) {
     useEffect(() => {
         window.Prism.highlightAll();
 
@@ -11,13 +11,11 @@ export default function Dashboard({ db, hideSum }) {
         }
     }, [db]);
 
-    if (!db) { return null; }
-
     return (
         <>
-            <nav id="nav">{Object.keys(db.queries).map(text => <a key={text} href={"#" + encodeURIComponent(text)}>{text}</a>)}</nav >
-            {Object.entries(db.queries).map(([item, queryText]) => (
-                <DashboardItem key={item} item={item} queryText={queryText} db={db.db} hideSum={hideSum} />
+            <nav id="nav">{Object.keys(queries).map(text => <a key={text} href={"#" + encodeURIComponent(text)}>{text}</a>)}</nav >
+            {Object.entries(queries).map(([item, queryText]) => (
+                <DashboardItem key={item} item={item} queryText={queryText} db={db} hideSum={hideSum} />
             ))}
         </>
     );

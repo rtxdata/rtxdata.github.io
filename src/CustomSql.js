@@ -1,15 +1,12 @@
 import React, { useCallback } from "react";
 
-export default function CustomSql() {
+export default function CustomSql({ setCustomQueries }) {
     const runCustomSql = useCallback(() => {
         const customQuery = prompt("Введите SQL запрос", localStorage.sql || "SELECT * FROM RaiffTxns;");
-        if (customQuery !== null) {
-            localStorage.sql = customQuery;
-            window.results.innerHTML = '';
+        if (customQuery === null) { return; }
 
-            window.dashboard({ [customQuery]: customQuery });
-            document.querySelector("#nav").innerHTML = '';
-        }
+        localStorage.sql = customQuery;
+        setCustomQueries({ [customQuery]: customQuery });
     }, []);
 
     return <button onClick={runCustomSql}>Выполнить SQL</button>;

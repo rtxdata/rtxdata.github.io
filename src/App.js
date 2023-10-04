@@ -11,6 +11,7 @@ import HideSum from './HideSum';
 import { getDB } from './db';
 
 export default function App() {
+    const [customQueries, setCustomQueries] = useState(null);
     const [db, setDB] = useState(null);
     const [hideSum, setHideSum] = useState(localStorage.hideSum === '1')
 
@@ -25,7 +26,7 @@ export default function App() {
         <h3><a href="#rtxdata">RtxData</a></h3>
         <div className="content">
             Анализ данных из Райфайзен Банка (Сербия)
-            <CustomSql />
+            <CustomSql setCustomQueries={setCustomQueries} />
         </div>
 
         <ExtensionButtons />
@@ -36,6 +37,6 @@ export default function App() {
 
         <HideSum hideSum={hideSum} setHideSum={setHideSumLs} />
 
-        <Dashboard db={db} hideSum={hideSum} />
+        {db ? <Dashboard db={db.db} queries={customQueries || db.queries} hideSum={hideSum} /> : null}
     </>;
 }
