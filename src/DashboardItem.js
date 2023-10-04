@@ -32,7 +32,7 @@ export default function DashboardItem({ item, queryText, db }) {
             setFilterValues(Array.from(usedDates).sort());
         }
 
-    }, [item, queryText, selected, filterValues.length]);
+    }, [item, queryText, selected, filterValues.length, db]);
 
     return (
         <div>

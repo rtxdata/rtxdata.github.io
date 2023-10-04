@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function LocalStorageItems() {
+export default function StorageItems() {
     const names = Object.keys(localStorage).filter(k => k.endsWith('.json'));
 
     const downloadItem = name => {

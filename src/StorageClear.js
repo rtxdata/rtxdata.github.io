@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 
-export default function ClearStorage() {
+export default function StorageClear() {
     const clearLS = useCallback(() => {
         localStorage.clear();
         window.location.hash = '';
