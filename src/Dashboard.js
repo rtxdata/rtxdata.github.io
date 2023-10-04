@@ -11,9 +11,11 @@ export default function Dashboard({ db, queries, hideSum }) {
 
     return (
         <>
-            <nav id="nav">{Object.keys(queries).map(text => <a key={text} href={"#" + encodeURIComponent(text)}>{text}</a>)}</nav >
-            {Object.entries(queries).map(([item, queryText]) => (
-                <DashboardItem key={item} item={item} queryText={queryText} db={db} hideSum={hideSum} />
+            <nav id="nav">
+                {Object.keys(queries).map(name => <a key={name} href={"#" + encodeURIComponent(name)}>{name}</a>)}
+            </nav>
+            {Object.entries(queries).map(([name, query]) => (
+                <DashboardItem key={name} name={name} query={query} db={db} hideSum={hideSum} />
             ))}
         </>
     );

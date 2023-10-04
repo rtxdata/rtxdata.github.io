@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DataElement from './DataElement';
 
-export default function DashboardItem({ item, queryText, db, hideSum }) {
+export default function DashboardItem({ name, query, db, hideSum }) {
     const [df, setDf] = useState(null);
     const [filterValues, setFilterValues] = useState([]);
     const [selected, setSelected] = useState('all');
@@ -22,7 +22,7 @@ export default function DashboardItem({ item, queryText, db, hideSum }) {
             db.create_function(key, overrides[key]);
         }
 
-        const result = db.exec(queryText);
+        const result = db.exec(query);
         setDf(result.length === 0 ? null : result[result.length - 1]);
 
         if (usedDates.size > 0) { setFilterValues(["all", ...Array.from(usedDates).sort()]); }
@@ -31,12 +31,12 @@ export default function DashboardItem({ item, queryText, db, hideSum }) {
             setFilterValues(Array.from(usedDates).sort());
         }
 
-    }, [item, queryText, selected, filterValues.length, db]);
+    }, [name, query, selected, filterValues.length, db]);
 
     return (
         <div>
-            <h3 id={item}>{item}</h3>
-            <pre><code className="language-sql">{queryText}</code></pre>
+            <h3 id={name}>{name}</h3>
+            <pre><code className="language-sql">{query}</code></pre>
             {filterValues.length > 0 && (
                 <div>
                     Дата:
@@ -47,7 +47,7 @@ export default function DashboardItem({ item, queryText, db, hideSum }) {
                     </select>
                 </div>
             )}
-            <DataElement df={df} name={item} hideSum={hideSum} />
+            <DataElement df={df} name={name} hideSum={hideSum} />
         </div>
     );
 }
