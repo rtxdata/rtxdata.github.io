@@ -15,7 +15,12 @@ export default function App() {
     const [db, setDB] = useState(null);
     const [hideSum, setHideSum] = useState(localStorage.hideSum === '1')
 
-    useEffect(() => { getDB().then(db => setDB(db)); }, []);
+    useEffect(() => {
+        const handler = () => { getDB().then(db => setDB(db)) };
+        handler();
+        window.addEventListener('localStorageUpdate', handler);
+        return () => { window.removeEventListener('localStorageUpdate', handler); };
+    }, []);
 
     const setHideSumLs = ({ target }) => {
         localStorage.hideSum = target.checked ? '1' : '0';

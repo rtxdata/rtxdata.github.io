@@ -3,8 +3,7 @@ import React, { useCallback } from "react";
 export default function StorageClear() {
     const clearLS = useCallback(() => {
         localStorage.clear();
-        window.location.hash = '';
-        window.location.reload();
+        window.dispatchEvent(new Event('localStorageUpdate'));
     }, []);
 
     return <div className="content">

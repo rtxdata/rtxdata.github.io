@@ -36,8 +36,7 @@
 
     window.save = function (key, value) {
       localStorage[key] = value;
-      window.location.hash = '';
-      window.location.reload();
+      window.dispatchEvent(new Event('localStorageUpdate'));
     }
   </script>
 </head>

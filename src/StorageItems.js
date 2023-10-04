@@ -12,8 +12,7 @@ export default function StorageItems() {
 
     const deleteItem = name => {
         delete localStorage[name];
-        window.location.hash = '';
-        window.location.reload();
+        window.dispatchEvent(new Event('localStorageUpdate'));
     };
 
     return (
