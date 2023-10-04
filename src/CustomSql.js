@@ -10,7 +10,7 @@ export default function CustomSql() {
             window.dashboard({ [customQuery]: customQuery });
             document.querySelector("#nav").innerHTML = '';
         }
-    });
+    }, []);
 
     return <button onClick={runCustomSql}>Выполнить SQL</button>;
 }

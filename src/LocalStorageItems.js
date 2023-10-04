@@ -20,11 +20,11 @@ export default function LocalStorageItems() {
         <div>
             {names.length === 0 ? null : names.map(name => (
                 <div key={name}>
-                    <a href="#" onClick={() => downloadItem(name)}>
+                    <a href="#dl" onClick={() => downloadItem(name)}>
                         {name}
                     </a>
                     <span> ({((localStorage[name].length * 2) / 1024 / 1024).toFixed(2)} MB) </span>
-                    <a href="#" onClick={() => deleteItem(name)}>
+                    <a href="#del" onClick={() => deleteItem(name)}>
                         Удалить
                     </a>
                 </div>
