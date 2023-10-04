@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 
 import DataElement from './DataElement';
 
-export default function DashboardItem({ item, queryText }) {
+export default function DashboardItem({ item, queryText, db }) {
     const [df, setDf] = useState(null);
     const [filterValues, setFilterValues] = useState([]);
     const [selected, setSelected] = useState('all');
@@ -20,10 +20,10 @@ export default function DashboardItem({ item, queryText }) {
         };
 
         for (let key in overrides) {
-            window.db.create_function(key, overrides[key]);
+            db.create_function(key, overrides[key]);
         }
 
-        const result = window.db.exec(queryText);
+        const result = db.exec(queryText);
         setDf(result.length === 0 ? null : result[result.length - 1]);
 
         if (usedDates.size > 0) { setFilterValues(["all", ...Array.from(usedDates).sort()]); }

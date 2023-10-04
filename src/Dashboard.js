@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import DashboardItem from './DashboardItem';
 
-export default function Dashboard({ queriesState }) {
+export default function Dashboard({ db }) {
     useEffect(() => {
         window.Prism.highlightAll();
 
@@ -9,12 +9,15 @@ export default function Dashboard({ queriesState }) {
         if (elem) {
             elem.scrollIntoView();
         }
-    }, [queriesState]);
+    }, [db]);
+
+    if (!db) { return null; }
 
     return (
         <>
-            {Object.entries(queriesState).map(([item, queryText]) => (
-                <DashboardItem key={item} item={item} queryText={queryText} />
+            <nav id="nav">{Object.keys(db.queries).map(text => <a key={text} href={"#" + encodeURIComponent(text)}>{text}</a>)}</nav >
+            {Object.entries(db.queries).map(([item, queryText]) => (
+                <DashboardItem key={item} item={item} queryText={queryText} db={db.db} />
             ))}
         </>
     );

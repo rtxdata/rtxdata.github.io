@@ -10,33 +10,27 @@ import PieNoSum from './PieNoSum';
 import { getDB } from './db';
 
 export default function App() {
-    const [queriesState, setQueriesState] = useState({});
+    const [db, setDB] = useState(null);
+
+    useEffect(() => { getDB().then(db => setDB(db)); }, []);
 
     useEffect(() => {
-        (async () => {
-            if (window.inited) { return; }
-            window.inited = true;
+        if (window.inited) { return; }
+        window.inited = true;
 
-            window.results = document.querySelector("#results");
-            window.fileinput = document.querySelector('input[type=file]');
-            window.pieNoSum = document.querySelector('#pieNoSum');
-            window.ls = document.querySelector('#ls');
 
-            window.pieNoSum.checked = localStorage.pieNoSum === '1';
+        window.pieNoSum = document.querySelector('#pieNoSum');
+        window.pieNoSum.checked = localStorage.pieNoSum === '1';
 
-            window.fileinput.addEventListener('change', ({ target }) => {
-                const file = target.files[0];
-                const reader = new FileReader();
 
-                reader.onload = ({ target }) => window.save(file.name, target.result);
-                reader.readAsText(file);
-            });
+        window.fileinput = document.querySelector('input[type=file]');
+        window.fileinput.addEventListener('change', ({ target }) => {
+            const file = target.files[0];
+            const reader = new FileReader();
 
-            const { db, queries } = await getDB();
-            window.db = db;
-
-            setQueriesState(queries);
-        })();
+            reader.onload = ({ target }) => window.save(file.name, target.result);
+            reader.readAsText(file);
+        });
     }, []);
 
     return <>
@@ -46,17 +40,16 @@ export default function App() {
             <CustomSql />
         </div>
         <ExtensionButtons />
+
+        <input id="fileinput" type="file" accept=".json" style={{ display: 'none' }} />
         <div className="content">
             <button onClick={() => window.fileinput.click()}>Импорт данных из json</button>
             <a href="https://github.com/rtxdata/rtxdata.github.io#скачиваем-свои-данные">Где их взять?</a>
         </div>
+
         <LocalStorageItems />
         <ClearStorage />
         <PieNoSum />
-        <input id="fileinput" type="file" accept=".json" style={{ display: 'none' }} />
-        <nav id="nav">{Object.keys(queriesState).map(text => <a key={text} href={"#" + encodeURIComponent(text)}>{text}</a>)}</nav >
-        <div id="results">
-            <Dashboard queriesState={queriesState} />
-        </div>
+        <Dashboard db={db} />
     </>;
 }
