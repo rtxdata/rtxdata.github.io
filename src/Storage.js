@@ -1,6 +1,9 @@
-import React, { useRef } from "react";
+import React, { useRef, useContext } from "react";
+import { Context } from './Context';
 
 export default function Storage() {
+    useContext(Context);
+
     function onChoose() { fileRef.current.click(); }
 
     function deleteItem(name) {

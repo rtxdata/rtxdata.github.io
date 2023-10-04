@@ -12,7 +12,6 @@ export default function Dashboard({ overrides }) {
     }, [db]);
 
     if (!db) { return "Загрузка..."; }
-
     const entries = Object.entries(overrides || db.queries);
 
     return (

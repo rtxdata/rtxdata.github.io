@@ -5,7 +5,6 @@ import Storage from './Storage';
 import HideSum from './HideSum';
 import Dashboard from './Dashboard';
 
-
 export default function App() {
     const [overrides, setOverrides] = useState(null);
 
