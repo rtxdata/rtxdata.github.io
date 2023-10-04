@@ -5,7 +5,7 @@ export default function PieNoSum() {
         localStorage.pieNoSum = window.pieNoSum.checked ? '1' : '0';
         window.location.hash = '';
         window.location.reload();
-    });
+    }, []);
 
     return <div className="content">
         <input type="checkbox" id="pieNoSum" onChange={pieNoSumChanged} />

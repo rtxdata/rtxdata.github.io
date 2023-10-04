@@ -6,20 +6,10 @@ import App from './App';
 import './index.css';
 
 window.element = function (item, type = 'div') {
-  const element = document.createElement(type);
-  element.innerText = String(item);
-  element.id = String(item);
-  return element;
-}
-
-window.headerElement = function (text) {
-  const a = document.createElement('a');
-  const h3 = document.createElement('h3');
-
-  a.innerText = h3.id = h3.innerText = text;
-  a.href = "#" + encodeURIComponent(a.innerText);
-  document.querySelector("#nav").appendChild(a);
-  return h3;
+  const elem = document.createElement(type);
+  elem.innerText = String(item);
+  elem.id = String(item);
+  return elem;
 }
 
 window.queryElement = function (query) {
@@ -41,7 +31,7 @@ window.datePlotElement = function (df, title) {
     y.push(dataObj[strDate] || 0);
   }
 
-  Plotly.newPlot(div, [{ type: 'scatter', mode: 'lines', x, y, line: { shape: 'linear' } }],
+  window.Plotly.newPlot(div, [{ type: 'scatter', mode: 'lines', x, y, line: { shape: 'linear' } }],
     { title, xaxis: { title: '' }, yaxis: { title: '' } });
   return div;
 }
@@ -49,11 +39,11 @@ window.datePlotElement = function (df, title) {
 window.totalPieElement = function (df, title) {
   const div = document.createElement('div');
 
-  Plotly.newPlot(div, [{
+  window.Plotly.newPlot(div, [{
     type: 'pie',
     labels: df.values.map(d => d[0]),
     values: df.values.map(d => d[1]),
-    textinfo: pieNoSum.checked ? 'percent' : 'value+percent'
+    textinfo: window.pieNoSum.checked ? 'percent' : 'value+percent'
   }], { title, width: 700 });
 
   return div;
@@ -91,76 +81,20 @@ window.dataElement = function (queryText, name, overrides) {
       window.db.create_function(key, overrides[key]);
     }
 
-    const df = query(queryText);
+    const df = window.query(queryText);
     if (!df || df.values.length === 0) {
-      return (element('Нет данных'));
+      return (window.element('Нет данных'));
     } else if (df.columns.length === 2 && df.columns[0] === 'date') {
-      return (datePlotElement(df, name));
+      return (window.datePlotElement(df, name));
     } else if (df.columns.length === 2 && df.columns[1] === 'total') {
-      return (totalPieElement(df, name));
+      return (window.totalPieElement(df, name));
     } else {
-      return (tableElement(df, name));
+      return (window.tableElement(df, name));
     }
   } catch (e) {
     console.error(e);
-    return (element(`Ошибка ${e}`));
+    return (window.element(`Ошибка ${e}`));
   }
-}
-
-window.dashboard = function (queries) {
-  for (let item in queries) {
-    const queryText = queries[item];
-    const container = document.createElement("div");
-    results.appendChild(container);
-
-    container.appendChild(headerElement(item));
-    container.appendChild(queryElement(queryText));
-
-    const filter = document.createElement("div");
-    container.appendChild(filter);
-
-    const res = document.createElement("div");
-    container.appendChild(res);
-
-    function setResult(overrides) {
-      res.innerHTML = '';
-      res.appendChild(dataElement(queryText, item, overrides));
-    }
-
-    const dates = new Set();
-    setResult({
-      dt(val) {
-        dates.add(val.slice(0, 7));
-        return true;
-      }
-    });
-
-    if (dates.size > 0) {
-      const datesArr = ['all', ...Array.from(dates).sort()];
-      const select = document.createElement('select');
-      select.addEventListener('change', ({ target }) => {
-        setResult({
-          dt(val) {
-            dates.add();
-            return target.value === 'all' || val.slice(0, 7) === target.value;
-          }
-        });
-      });
-
-      datesArr.forEach(opt => {
-        const option = document.createElement('option');
-        option.text = option.value = opt;
-        select.appendChild(option);
-      });
-
-      filter.innerText = "Дата:"
-      filter.appendChild(select);
-    }
-  }
-
-  Prism.highlightAll();
-  const element = document.getElementById(decodeURIComponent(location.hash.substring(1)));
-  if (element) { element.scrollIntoView(); }
 }
 
 window.query = function (sqlQuery) {
@@ -174,8 +108,8 @@ window.query = function (sqlQuery) {
 // API!
 window.save = function (key, value) {
   localStorage[key] = value;
-  location.hash = '';
-  location.reload();
+  window.location.hash = '';
+  window.location.reload();
 }
 
 navigator?.serviceWorker?.register('/sw.js');

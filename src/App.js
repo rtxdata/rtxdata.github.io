@@ -1,13 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import LocalStorageItems from './LocalStorageItems';
 import ExtensionButtons from './ExtensionButtons';
 import CustomSql from './CustomSql';
 import ClearStorage from './ClearStorage';
+import Dashboard from './Dashboard';
+import PieNoSum from './PieNoSum';
 
 import { getDB } from './db';
 
 export default function App() {
+    const [queriesState, setQueriesState] = useState({});
+
     useEffect(() => {
         (async () => {
             if (window.inited) { return; }
@@ -31,12 +35,12 @@ export default function App() {
             const { db, queries } = await getDB();
             window.db = db;
 
-            window.dashboard(queries);
+            setQueriesState(queries);
         })();
     }, []);
 
     return <>
-        <h3><a href="#">RtxData</a></h3>
+        <h3><a href="#rtxdata">RtxData</a></h3>
         <div className="content">
             Анализ данных из Райфайзен Банка (Сербия)
             <CustomSql />
@@ -50,7 +54,9 @@ export default function App() {
         <ClearStorage />
         <PieNoSum />
         <input id="fileinput" type="file" accept=".json" style={{ display: 'none' }} />
-        <nav id="nav"></nav>
-        <div id="results"></div>
+        <nav id="nav">{Object.keys(queriesState).map(text => <a key={text} href={"#" + encodeURIComponent(text)}>{text}</a>)}</nav >
+        <div id="results">
+            <Dashboard queriesState={queriesState} />
+        </div>
     </>;
 }
