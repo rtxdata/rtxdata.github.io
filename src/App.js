@@ -6,22 +6,20 @@ import StorageAdd from './StorageAdd';
 import ExtensionButtons from './ExtensionButtons';
 import CustomSql from './CustomSql';
 import Dashboard from './Dashboard';
-import PieNoSum from './PieNoSum';
+import HideSum from './HideSum';
 
 import { getDB } from './db';
 
 export default function App() {
     const [db, setDB] = useState(null);
+    const [hideSum, setHideSum] = useState(localStorage.hideSum === '1')
 
     useEffect(() => { getDB().then(db => setDB(db)); }, []);
 
-    useEffect(() => {
-        if (window.inited) { return; }
-        window.inited = true;
-
-        window.pieNoSum = document.querySelector('#pieNoSum');
-        window.pieNoSum.checked = localStorage.pieNoSum === '1';
-    }, []);
+    const setHideSumLs = ({ target }) => {
+        localStorage.hideSum = target.checked ? '1' : '0';
+        setHideSum(target.checked);
+    }
 
     return <>
         <h3><a href="#rtxdata">RtxData</a></h3>
@@ -36,8 +34,8 @@ export default function App() {
         <StorageItems />
         <StorageClear />
 
-        <PieNoSum />
+        <HideSum hideSum={hideSum} setHideSum={setHideSumLs} />
 
-        <Dashboard db={db} />
+        <Dashboard db={db} hideSum={hideSum} />
     </>;
 }

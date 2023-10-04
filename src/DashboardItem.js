@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 
 import DataElement from './DataElement';
 
-export default function DashboardItem({ item, queryText, db }) {
+export default function DashboardItem({ item, queryText, db, hideSum }) {
     const [df, setDf] = useState(null);
     const [filterValues, setFilterValues] = useState([]);
     const [selected, setSelected] = useState('all');
@@ -48,7 +48,7 @@ export default function DashboardItem({ item, queryText, db }) {
                     </select>
                 </div>
             )}
-            <DataElement df={df} name={item} />
+            <DataElement df={df} name={item} hideSum={hideSum} />
         </div>
     );
 }
