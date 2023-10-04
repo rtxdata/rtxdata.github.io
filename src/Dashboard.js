@@ -6,9 +6,7 @@ export default function Dashboard({ db, queries, hideSum }) {
         window.Prism.highlightAll();
 
         const elem = document.getElementById(decodeURIComponent(window.location.hash.substring(1)));
-        if (elem) {
-            elem.scrollIntoView();
-        }
+        if (elem) { elem.scrollIntoView(); }
     }, [db]);
 
     return (

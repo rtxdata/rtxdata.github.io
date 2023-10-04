@@ -1,12 +1,11 @@
-import React, { useEffect, useState, useCallback } from 'react';
-
+import React, { useEffect, useState } from 'react';
 import DataElement from './DataElement';
 
 export default function DashboardItem({ item, queryText, db, hideSum }) {
     const [df, setDf] = useState(null);
     const [filterValues, setFilterValues] = useState([]);
     const [selected, setSelected] = useState('all');
-    const handleDateChange = useCallback((e) => { setSelected(e.target.value); }, [setSelected]);
+    const handleDateChange = (e) => { setSelected(e.target.value); }
 
     useEffect(() => {
         const usedDates = new Set();
