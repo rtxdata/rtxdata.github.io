@@ -5,15 +5,7 @@ export default function DashboardItem({ item, queryText }) {
     const [selected, setSelected] = useState('all');
     const handleDateChange = useCallback((e) => { setSelected(e.target.value); }, [setSelected]);
 
-    const queryRef = useRef(null);
     const elementRef = useRef(null);
-
-    useEffect(() => {
-        queryRef.current.innerHTML = '';
-        queryRef.current.appendChild(window.queryElement(queryText));
-
-        window.Prism.highlightAll();
-    }, [queryText]);
 
     useEffect(() => {
         const usedDates = new Set();
@@ -40,7 +32,7 @@ export default function DashboardItem({ item, queryText }) {
     return (
         <div>
             <h3 id={item}>{item}</h3>
-            <div ref={queryRef} />
+            <pre><code class="language-sql">{queryText}</code></pre>
             {filterValues.length > 0 && (
                 <div>
                     Дата:

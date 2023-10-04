@@ -12,13 +12,6 @@ window.element = function (item, type = 'div') {
   return elem;
 }
 
-window.queryElement = function (query) {
-  const queryDiv = document.createElement("div");
-  queryDiv.innerHTML = '<pre><code class="language-sql"></code></pre>';
-  queryDiv.querySelector('code').innerText = query;
-  return queryDiv;
-}
-
 window.datePlotElement = function (df, title) {
   const div = document.createElement('div');
   const dataObj = Object.fromEntries(df.values), dates = df.values.map(e => new Date(e[0]));
@@ -105,12 +98,7 @@ window.query = function (sqlQuery) {
   return { columns, values };
 }
 
-// API!
-window.save = function (key, value) {
-  localStorage[key] = value;
-  window.location.hash = '';
-  window.location.reload();
-}
+
 
 navigator?.serviceWorker?.register('/sw.js');
 

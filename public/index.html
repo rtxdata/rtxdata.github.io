@@ -30,10 +30,17 @@
 
   <script>
     window.isExtensionActive = false;
+
     window.extensionActive = () => {
       window.isExtensionActive = true;
       window.dispatchEvent(new Event('extensionActive'));
     };
+
+    window.save = function (key, value) {
+      localStorage[key] = value;
+      window.location.hash = '';
+      window.location.reload();
+    }
   </script>
 </head>
 
