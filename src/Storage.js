@@ -36,7 +36,7 @@ export default function Storage() {
     return <>
         <input ref={fileRef} onChange={onFile} type="file" accept=".json" style={{ display: 'none' }} />
         <div className="content">
-            <button onClick={onChoose}>Импорт данных из json</button>
+            <button onClick={onChoose}>Импорт данных из json</button>{" "}
             <a href="https://github.com/rtxdata/rtxdata.github.io#скачиваем-свои-данные">Где их взять?</a>
         </div>
         <div className="content">

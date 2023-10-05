@@ -11,11 +11,11 @@ export default function App() {
     return <>
         <h3><a href="#rtxdata">RtxData</a></h3>
         <div className="content">
-            Анализ данных из Райфайзен Банка (Сербия)
+            Анализ данных из Райфайзен Банка (Сербия){" "}
             <CustomSql setOverrides={setOverrides} />
         </div>
-        <div class="content">
-            <a href="https://chrome.google.com/webstore/detail/beta-rtxdata-assistant/djmfdajhgfpglhghcmapiannlloimpib" target="_blank">
+        <div className="content">
+            <a href="https://chrome.google.com/webstore/detail/beta-rtxdata-assistant/djmfdajhgfpglhghcmapiannlloimpib" target="_blank" rel="noreferrer">
                 Расширение для скачивания данных
             </a>
         </div>

@@ -16,7 +16,6 @@ export default function Pie({ df, title }) {
                 textinfo: hideSum ? 'percent' : 'value+percent'
             }]}
             layout={{ title: title, width: 700 }}
-            onClick={({ points }) => console.log(points[0].label)}
         />
     </>;
 }
