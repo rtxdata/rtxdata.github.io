@@ -25,16 +25,15 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Set Git user
-      run: |
-        git config --global user.email "github-actions-bot@users.noreply.github.com"
-        git config --global user.name "GitHub Actions"
+    - name: Run build
+      run: npm run build
 
-    - name: Run deploy script
-      run: npm run deploy
-      env:
-        REPO: https://${{ secrets.GITHUB_TOKEN }}@github.com/rtxdata/rtxdata.github.io.git
+    - name: Deploy to GitHub Pages
+      uses: actions/deploy-pages@v2
+      with:
+        token: ${{ github.token }}
+        artifact_name: build
 
 permissions:
-  contents: write
   pages: write
+  id-token: write
