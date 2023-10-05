@@ -9,7 +9,7 @@ export default function App() {
     const [overrides, setOverrides] = useState(null);
 
     return <>
-        <h3><a href="#rtxdata">RtxData</a></h3>
+        <h3><a href="https://github.com/rtxdata/rtxdata.github.io">RtxData GitHub</a></h3>
         <div className="content">
             Анализ данных из Райфайзен Банка (Сербия){" "}
             <CustomSql setOverrides={setOverrides} />
