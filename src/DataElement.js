@@ -5,7 +5,10 @@ import Plot from './Plot';
 import Table from './Table';
 
 export default function DataElement({ df, name }) {
-    if (!df || df.values.length === 0) {
+    if (df && df.error) {
+        console.error(df.error);
+        return <div>{String(df.error)}</div>
+    } else if (!df || df.values.length === 0) {
         return <div>Нет данных</div>
     } else if (df.columns.length === 2 && df.columns[0] === 'date') {
         return <Plot df={df} title={name} />;

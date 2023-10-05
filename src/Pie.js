@@ -8,11 +8,15 @@ export default function Pie({ df, title }) {
 
     return <>
         <HideSum />
-        <Plotly data={[{
-            type: 'pie',
-            labels: df.values.map(d => d[0]),
-            values: df.values.map(d => d[1]),
-            textinfo: hideSum ? 'percent' : 'value+percent'
-        }]} layout={{ title: title, width: 700 }} />
+        <Plotly
+            data={[{
+                type: 'pie',
+                labels: df.values.map(d => d[0]),
+                values: df.values.map(d => d[1]),
+                textinfo: hideSum ? 'percent' : 'value+percent'
+            }]}
+            layout={{ title: title, width: 700 }}
+            onClick={({ points }) => console.log(points[0].label)}
+        />
     </>;
 }
