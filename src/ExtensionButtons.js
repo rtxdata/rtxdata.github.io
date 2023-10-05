@@ -11,7 +11,7 @@ export default function ExtensionButtons() {
 
     return isExtensionActive ?
         <div>
-            <button onClick={() => window.openRaiff()}>Загрузить с raiffeisenbank.rs</button>
+            <button onClick={() => window.openRaiff()}>Загрузить с raiffeisenbank.rs</button>{' '}
             <button onClick={() => window.openWolt()}>Загрузить с wolt.com</button>
         </div> : null;
 }
