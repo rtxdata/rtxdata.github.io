@@ -29,10 +29,10 @@ jobs:
       run: npm run build
 
     - name: Upload build artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-pages-artifact@v2
       with:
-        name: github-pages
         path: build/
+        retention-days: 365
 
     - name: Deploy to GitHub Pages
       uses: actions/deploy-pages@v2
