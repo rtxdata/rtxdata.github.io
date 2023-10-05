@@ -1,0 +1,49 @@
+<html lang="ru">
+
+<head>
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self';script-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline';style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline';img-src 'self' data: blob:">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="RtxData - Анализ данных из Райфайзен Банка (Сербия)" />
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <meta name="google-site-verification" content="E0kIU_hp-oRr9MAMKFwYK1roAdtBq9hEkCy-DPiG1l8" />
+  <title>RtxData - Анализ данных из Райфайзен Банка (Сербия)</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-asm.js"
+    integrity="sha512-rmkykIfjko0kedpism7nBHHSJKyB9/Ake2ihqff5QpUSVy3fy5Da7U5chQKtzXGAXEmNqrQ25t+NJIlFh3LoNg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"
+    integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"
+    integrity="sha512-sijCOJblSCXYYmXdwvqV0tak8QJW5iy2yLB1wAbbLc3OOIueqymizRFWUS/mwKctnzPKpNdPJV3aK1zlDMJmXQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css"
+    integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <script>
+    window.isExtensionActive = false;
+
+    window.extensionActive = () => {
+      window.isExtensionActive = true;
+      window.dispatchEvent(new Event('extensionActive'));
+    };
+
+    window.save = function (key, value) {
+      localStorage[key] = value;
+      window.dispatchEvent(new Event('localStorageUpdate'));
+    }
+  </script>
+</head>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+</body>
+
+</html>

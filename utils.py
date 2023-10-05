@@ -145,7 +145,7 @@ def init_database(init_query):
             db.execute("INSERT INTO GlovoOrders (date, shop, price) VALUES (?, ?, ?);",
                        (format_date_time(order['creationTime']), order['storeName'], price))
 
-    db.create_function('dt', 1, lambda dt: True)
+    db.create_function('UI', 2, lambda name, value: True)
     db.executescript(init_query)
 
 
@@ -153,9 +153,9 @@ rates_rsd = {"RSD": 1, "EUR": 117, "USD": 110}
 pd.set_option('display.max_rows', 100)
 
 db = sqlite3.connect(':memory:')
-with open('patterns.json', 'r') as file:
+with open('./public/patterns.json', 'r') as file:
     patterns = json.load(file)
-with open("dashboard.sql", 'r') as file:
+with open("./public/dashboard.sql", 'r') as file:
     dashboard_SQL = file.read()
 
 init_database(get_queries()['init_query'])

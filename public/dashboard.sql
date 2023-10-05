@@ -3,10 +3,10 @@ CREATE TABLE Pos AS SELECT id, SUM(sum) as sum, SUM(rsum) as rsum, curr, kat1, k
     FROM RaiffTxns WHERE sum < 0 AND type = "POS" GROUP BY curr, date, type, card, ref, ref2, acc;
 
 -- По категориям
-SELECT kat1, SUM(ABS(rsum)) as total FROM Pos WHERE dt(date) GROUP BY kat1 ORDER BY total DESC LIMIT 10;
+SELECT kat1, SUM(ABS(rsum)) as total FROM Pos WHERE UI("month", date) GROUP BY kat1 ORDER BY total DESC LIMIT 10;
 
--- Интернет
-SELECT kat2, SUM(ABS(rsum)) as total FROM Pos WHERE kat1 = 'internet' GROUP BY kat2 ORDER BY total DESC LIMIT 10;
+-- Субкатегория
+SELECT kat2, SUM(ABS(rsum)) as total FROM Pos WHERE UI("kat", kat1) GROUP BY kat2 ORDER BY total DESC LIMIT 10;
 
 -- Остальное
 SELECT kat2, SUM(ABS(rsum)) as total FROM Pos WHERE kat1 = 'other' GROUP BY kat2 ORDER BY total DESC LIMIT 10;

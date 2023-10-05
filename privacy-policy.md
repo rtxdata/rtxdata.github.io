@@ -1,8 +1,8 @@
-### RTXData Privacy Policy
+### RtxData Privacy Policy
 
-**Last Updated: October 3, 2023**
+**Last Updated: October 5, 2023**
 
-This Privacy Policy describes how RTXData (“we”, “our”, or “us”) collects, uses, and safeguards information obtained from users (each, a “User”) of the rtxdata.github.io website (“Site”) and RTXData browser extension for Chrome (“Extension”), and any services offered in connection with the Site and Extension (collectively, the “Services”).
+This Privacy Policy describes how RtxData (“we”, “our”, or “us”) collects, uses, and safeguards information obtained from users (each, a “User”) of the rtxdata.github.io website (“Site”) and RtxData browser extension for Chrome (“Extension”), and any services offered in connection with the Site and Extension (collectively, the “Services”).
 
 **1. Information We Collect**
 
@@ -36,4 +36,10 @@ If you have any questions or suggestions about our Privacy Policy, do not hesita
 
 This policy and the use of the Services are governed by the laws of Serbia. If a dispute arises, users agree to submit to the jurisdiction of the courts in Serbia.
 
-By using RTXData Services, you signify your acceptance of this Privacy Policy. If you do not agree to this policy, please do not use our Services. Your continued use of the Services following the posting of changes to this policy will be deemed your acceptance of those changes.
+By using RtxData Services, you signify your acceptance of this Privacy Policy. If you do not agree to this policy, please do not use our Services. Your continued use of the Services following the posting of changes to this policy will be deemed your acceptance of those changes.
+
+**9. Third Party Services**
+
+RtxData use GitHub Pages for hosting and Cloudflare as CDN. Their privacy policies can be found here:
+- https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement
+- https://www.cloudflare.com/privacypolicy/
