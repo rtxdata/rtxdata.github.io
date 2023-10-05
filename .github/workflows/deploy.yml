@@ -28,11 +28,16 @@ jobs:
     - name: Run build
       run: npm run build
 
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: github-pages
+        path: build/
+
     - name: Deploy to GitHub Pages
       uses: actions/deploy-pages@v2
       with:
         token: ${{ github.token }}
-        artifact_name: build
 
 permissions:
   pages: write
