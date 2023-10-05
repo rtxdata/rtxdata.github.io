@@ -1,6 +1,3 @@
-import patterns from './patterns.json';
-import dashboardSQLPath from './dashboard.sql';
-
 export const ratesRsd = { "RSD": 1, "EUR": 117, "USD": 110 };
 
 export function formatDateString(date) {
@@ -20,19 +17,18 @@ export function formatDateTime(date) {
 }
 
 export function parseRef(ref) {
-    for (let type in patterns) {
-        for (let key in patterns[type]) {
+    for (let type in window.patterns) {
+        for (let key in window.patterns[type]) {
             if (ref.includes(key)) {
-                return [type, patterns[type][key]];
+                return [type, window.patterns[type][key]];
             }
         }
     }
     return ["other", ref];
 }
 
-async function getQueries() {
-    const dashboardSQL = await fetch(dashboardSQLPath).then((response) => response.text())
-    const [initQuery, ...dash] = dashboardSQL.split('\n-- ')
+function getQueries() {
+    const [initQuery, ...dash] = window.dashboardSQL.split('\n-- ')
     const queries = { initQuery: initQuery };
 
     dash.forEach(item => {
@@ -47,7 +43,7 @@ async function getQueries() {
 }
 
 export async function getDB() {
-    const { initQuery, ...queries } = await getQueries();
+    const { initQuery, ...queries } = getQueries();
     const SQL = await window.initSqlJs({});
     const db = new SQL.Database();
 

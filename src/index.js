@@ -6,5 +6,12 @@ import './index.css';
 
 navigator?.serviceWorker?.register('/sw.js');
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<React.StrictMode><Provider><App /></Provider></React.StrictMode >);
+async function init() {
+    window.dashboardSQL = await fetch(process.env.PUBLIC_URL + "/dashboard.sql").then((response) => response.text());
+    window.patterns = await fetch(process.env.PUBLIC_URL + "/patterns.json").then((response) => response.json());
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<React.StrictMode><Provider><App /></Provider></React.StrictMode >);
+}
+
+init();
