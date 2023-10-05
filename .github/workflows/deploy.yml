@@ -16,6 +16,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+      env:
+        REPO: https://${{ secrets.GITHUB_TOKEN }}@github.com/rtxdata/rtxdata.github.io.git
 
     - name: Setup Node.js
       uses: actions/setup-node@v2
@@ -27,8 +29,6 @@ jobs:
 
     - name: Run deploy script
       run: npm run deploy
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 permissions:
   contents: write
