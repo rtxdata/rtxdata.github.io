@@ -1,7 +1,10 @@
 (async () => {
     async function getTx() {
-        // Берем транзакции за 2023 год
-        const filter = '"filterParam":{"FromDate":"01.01.2023","ToDate":"01.01.2024"}'
+        // Берем транзакции за последние 365 дней
+        formatter = new Intl.DateTimeFormat('ru-RU');
+        fromDate = formatter.format(new Date() - 365 * 24 * 60 * 60 * 1000);
+        toDate = formatter.format(new Date());
+        filter = `"filterParam":{"FromDate":"${fromDate}","ToDate":"${toDate}"}`
 
         // URL фронтового API Райфа
         const base = "https://rol.raiffeisenbank.rs/Retail/Protected/Services/DataService.svc/"
@@ -43,7 +46,7 @@
 
         // Отправляем обратно
         window.opener.postMessage({
-            name: 'Raiff_2023_' + new Date().toISOString() + '.json',
+            name: 'Raiff_' + new Date().toISOString() + '.json',
             // Данные о транзакциях
             value: JSON.stringify({ transactions: await getTx() })
             // Данные может прочитать только RtxData
