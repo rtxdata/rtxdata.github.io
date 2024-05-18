@@ -23,8 +23,11 @@
 2) Открываем консоль разработчика, в Chrome/Yandex/Firefox это `F12` или `Cmd + Opt + I`
 3) Вставляем в консоль скрипт
 ```javascript
-// Берем транзакции за 2023 год
-filter = '"filterParam":{"FromDate":"01.01.2023","ToDate":"01.01.2024"}'
+// Берем транзакции за последние 365 дней
+formatter = new Intl.DateTimeFormat('ru-RU');
+fromDate = formatter.format(new Date() - 365 * 24 * 60 * 60 * 1000);
+toDate = formatter.format(new Date());
+filter = `"filterParam":{"FromDate":"${fromDate}","ToDate":"${toDate}"}`
 
 // URL фронтового API Райфа
 base = "https://rol.raiffeisenbank.rs/Retail/Protected/Services/DataService.svc/"
@@ -49,10 +52,10 @@ element = document.createElement('a');
 element.href = URL.createObjectURL(new Blob([JSON.stringify({ transactions })],
     { type: "application/json" }));
 // Сохраняем в загрузки
-element.download = 'Raiff_2023_' + new Date().toISOString() + '.json';
+element.download = 'Raiff_' + new Date().toISOString() + '.json';
 element.click();
 ```
-4) Ожидаем скачивания файла с транзакциями за 2023 год
+4) Ожидаем скачивания файла с транзакциями
 
 ### Строим графики, круговые диаграммы и таблицы
 
