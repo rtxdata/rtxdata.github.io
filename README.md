@@ -27,10 +27,10 @@
 formatter = new Intl.DateTimeFormat('ru-RU');
 fromDate = formatter.format(new Date() - 365 * 24 * 60 * 60 * 1000);
 toDate = formatter.format(new Date());
-filter = `"filterParam":{"FromDate":"${fromDate}","ToDate":"${toDate}"}`
+filter = `"filterParam":{"FromDate":"${fromDate}","ToDate":"${toDate}"}`;
 
 // URL фронтового API Райфа
-base = "https://rol.raiffeisenbank.rs/Retail/Protected/Services/DataService.svc/"
+base = "https://rol.raiffeisenbank.rs/Retail/Protected/Services/DataService.svc/";
 // Получаем банковские счета
 accounts = await fetch(base + "GetAllAccountBalance",
     { body: '{"gridName":"RetailAccountBalancePreviewFlat-L"}', 
@@ -113,9 +113,11 @@ https://t.me/enovikov11
 
 ### Скачиваем транзакции с бизнес счёта
 
+Спасибо @meaning за помощь с раздебагом бизнес счетов
+
 ```javascript
 // URL фронтового API Райфа
-base = "https://rol.raiffeisenbank.rs/CorporateV4/Protected/Services/DataServiceCorporate.svc/"
+base = "https://rol.raiffeisenbank.rs/CorporateV4/Protected/Services/DataServiceCorporate.svc/";
 // Получаем банковские счета
 accounts = await fetch(base + "GetAllAccountBalance",
     { body: '{"gridName":"AccountBalancePreview"}', 
@@ -134,14 +136,14 @@ for (account of accounts[3].filter(e=>e.ShortAccountNumber)) {
   
   if (account.CurrencyCode == "RSD") {
     // Скачиваем информацию о RSD транзакциях
-    filter = `"filterParam":{"FromDate":"${fromDate}","ToDate":"${toDate}"}`
+    filter = `"filterParam":{"FromDate":"${fromDate}","ToDate":"${toDate}"}`;
     transactions[accountNumber + "_RSD"] = await fetch(base + "GetAccountTurnoverDomesticRzbSrb", {
         body: '{"gridName":"AccountTurnoverDomesticMasterDetail-L",' +
             '"productCoreID":"501","accountNumber":"' + accountNumber + '",' + filter + '}',
             method: "POST"}).then(res => res.json());
   } else {
     // Скачиваем информацию о non-RSD транзакциях
-    filter = `"filterParam":{"accountNumber":"${accountNumber}","CurrencyCodeNumeric":"${account.CurrencyCodeNumeric}","FromDate":"${fromDate}","ToDate":"${toDate}"}`
+    filter = `"filterParam":{"accountNumber":"${accountNumber}","CurrencyCodeNumeric":"${account.CurrencyCodeNumeric}","FromDate":"${fromDate}","ToDate":"${toDate}"}`;
     transactions[accountNumber + "_" + account.CurrencyCodeNumeric] = await fetch(base + "GetAccountTurnover", {
         body: '{"gridName":"AccountTurnoverForeignMasterDetail-M",' +
             '"productCoreID":"120","accountNumber":"' + accountNumber + '",' + filter + '}',
@@ -188,7 +190,7 @@ element.click();
 2) Открываем консоль разработчика, в Chrome/Yandex/Firefox это `F12` или `Cmd + Opt + I`
 3) Вставляем в консоль скрипт
 ```javascript
-authorization = decodeURIComponent(document.cookie).match(/glovo_auth_info={"accessToken":"([^"]+)/)[1]
+authorization = decodeURIComponent(document.cookie).match(/glovo_auth_info={"accessToken":"([^"]+)/)[1];
 glovo = [];
 batch = await fetch("https://api.glovoapp.com/v3/customer/orders-list?offset=0&limit=10000",
     { headers: { accept: "application/json", authorization } }).then(res => res.json());
