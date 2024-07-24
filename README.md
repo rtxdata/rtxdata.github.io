@@ -111,6 +111,54 @@ https://t.me/enovikov11
 
 Проблемы в пакетах `nth-check` и `postcss` не затрагивают безопасность обработки данных, они потенциально могли бы привести к зависанию кода, но тк эти известные уязвимости в dev зависимостях `react-scripts`, они могут проявиться только на этапе сборки. Кроме того для их эксплуатации необходимо передать специально сформированные данные, которых в исходниках нет
 
+### Скачиваем транзакции с бизнес счёта
+
+```javascript
+// URL фронтового API Райфа
+base = "https://rol.raiffeisenbank.rs/CorporateV4/Protected/Services/DataServiceCorporate.svc/"
+// Получаем банковские счета
+accounts = await fetch(base + "GetAllAccountBalance",
+    { body: '{"gridName":"AccountBalancePreview"}', 
+    method: "POST" }).then(res => res.json());
+    
+// Берем транзакции за последние 365 дней
+formatter = new Intl.DateTimeFormat('ru-RU');
+fromDate = formatter.format(new Date() - 365 * 24 * 60 * 60 * 1000);
+toDate = formatter.format(new Date());
+
+// Получаем транзакции
+transactions = {};
+
+for (account of accounts[3].filter(e=>e.ShortAccountNumber)) {
+  accountNumber = account.ShortAccountNumber;
+  
+  if (account.CurrencyCode == "RSD") {
+    // Скачиваем информацию о RSD транзакциях
+    filter = `"filterParam":{"FromDate":"${fromDate}","ToDate":"${toDate}"}`
+    transactions[accountNumber + "_RSD"] = await fetch(base + "GetAccountTurnoverDomesticRzbSrb", {
+        body: '{"gridName":"AccountTurnoverDomesticMasterDetail-L",' +
+            '"productCoreID":"501","accountNumber":"' + accountNumber + '",' + filter + '}',
+            method: "POST"}).then(res => res.json());
+  } else {
+    // Скачиваем информацию о non-RSD транзакциях
+    filter = `"filterParam":{"accountNumber":"${accountNumber}","CurrencyCodeNumeric":"${account.CurrencyCodeNumeric}","FromDate":"${fromDate}","ToDate":"${toDate}"}`
+    transactions[accountNumber + "_" + account.CurrencyCodeNumeric] = await fetch(base + "GetAccountTurnover", {
+        body: '{"gridName":"AccountTurnoverForeignMasterDetail-M",' +
+            '"productCoreID":"120","accountNumber":"' + accountNumber + '",' + filter + '}',
+            method: "POST"}).then(res => res.json());
+  }
+}
+
+// Сохраняем транзакции как файл
+element = document.createElement('a');
+// Кодируем данные
+element.href = URL.createObjectURL(new Blob([JSON.stringify({ transactions })],
+    { type: "application/json" }));
+// Сохраняем в загрузки
+element.download = 'Raiff_Business_' + new Date().toISOString() + '.json';
+element.click();
+```
+
 ### Скачиваем заказы Вольта
 
 1) Логинимся https://wolt.com/
