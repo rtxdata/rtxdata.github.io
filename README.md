@@ -167,7 +167,7 @@ element.click();
 2) Открываем консоль разработчика, в Chrome/Yandex/Firefox это `F12` или `Cmd + Opt + I`
 3) Вставляем в консоль скрипт
 ```javascript
-token = decodeURIComponent(document.cookie).match(/__wtoken=[^,]+,"accessToken":"([^"]+)/)[1];
+token = JSON.parse(decodeURIComponent(document.cookie.split("__wtoken=")[1].split("; ")[0])).accessToken;
 orders = [];
 
 for (let skip = 0; ; skip += 100) {
