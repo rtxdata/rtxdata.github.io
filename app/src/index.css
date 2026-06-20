@@ -1,0 +1,136 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --radius: 0.625rem;
+
+  /* neutrals — cool near-white canvas, white cards, hairline borders, ink text */
+  --background: oklch(0.986 0.001 286);
+  --foreground: oklch(0.17 0.006 285);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.17 0.006 285);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.17 0.006 285);
+  --primary: oklch(0.21 0.006 285);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.968 0.001 286);
+  --secondary-foreground: oklch(0.21 0.006 285);
+  --muted: oklch(0.968 0.001 286);
+  --muted-foreground: oklch(0.55 0.012 285);
+  --accent: oklch(0.968 0.001 286);
+  --accent-foreground: oklch(0.21 0.006 285);
+  --destructive: oklch(0.62 0.21 23);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.922 0.003 286);
+  --input: oklch(0.922 0.003 286);
+  --ring: oklch(0.52 0.22 277);
+
+  /* semantic finance tokens */
+  --brand: oklch(0.52 0.22 277);          /* indigo accent — interactive/active */
+  --brand-foreground: oklch(0.985 0 0);
+  --pos: oklch(0.62 0.14 163);            /* emerald — income / positive */
+  --neg: oklch(0.605 0.21 23);           /* red — genuinely-bad delta */
+  --movement: oklch(0.66 0.03 256);      /* slate — ghosted money-movement */
+
+  /* chart: income=emerald, outflow=indigo, net=slate */
+  --chart-1: oklch(0.62 0.14 163);
+  --chart-2: oklch(0.52 0.22 277);
+  --chart-3: oklch(0.62 0.025 270);
+  --chart-4: oklch(0.66 0.03 256);
+  --chart-5: oklch(0.58 0.10 210);
+}
+
+.dark {
+  --background: oklch(0.16 0.004 285);
+  --foreground: oklch(0.96 0 0);
+  --card: oklch(0.205 0.005 285);
+  --card-foreground: oklch(0.96 0 0);
+  --popover: oklch(0.205 0.005 285);
+  --popover-foreground: oklch(0.96 0 0);
+  --primary: oklch(0.92 0 0);
+  --primary-foreground: oklch(0.21 0.006 285);
+  --secondary: oklch(0.27 0.006 286);
+  --secondary-foreground: oklch(0.96 0 0);
+  --muted: oklch(0.27 0.006 286);
+  --muted-foreground: oklch(0.71 0.01 286);
+  --accent: oklch(0.27 0.006 286);
+  --accent-foreground: oklch(0.96 0 0);
+  --destructive: oklch(0.7 0.19 22);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.62 0.2 277);
+  --brand: oklch(0.66 0.19 277);
+  --brand-foreground: oklch(0.985 0 0);
+  --pos: oklch(0.72 0.15 163);
+  --neg: oklch(0.7 0.19 22);
+  --movement: oklch(0.6 0.03 256);
+  --chart-1: oklch(0.72 0.15 163);
+  --chart-2: oklch(0.66 0.19 277);
+  --chart-3: oklch(0.7 0.03 256);
+  --chart-4: oklch(0.6 0.03 256);
+  --chart-5: oklch(0.62 0.1 210);
+}
+
+@theme inline {
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, SFMono-Regular, monospace;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-pos: var(--pos);
+  --color-neg: var(--neg);
+  --color-movement: var(--movement);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+/* Money/figures: tabular monospace so columns of numbers align. */
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  letter-spacing: -0.01em;
+}
