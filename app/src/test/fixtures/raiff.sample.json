@@ -1,0 +1,24 @@
+{
+  "transactions": {
+    "111000000000000001": [
+      [
+        null,
+        [
+          ["", "941", "RSD", "18.06.2026 00:00:00", "18.06.2026 00:00:00", "000000XXXXXX0000", "IKEA SRBIJA DOO BEOGRAD ( SRB BEOGRAD", "TX0000000001", "549", "0", "", "R00001", "REF0000000001#3#81#TX0000000001", "POS", "IKEA SRBIJA DOO BEOGRAD ( SRB BEOGRAD", ""],
+          ["", "941", "RSD", "17.06.2026 14:30:00", "17.06.2026 14:30:00", "000000XXXXXX0000", "PLATA PLATA", "TX0000000002", "0", "150000", "", "R00002", "REF0000000002#3#82#TX0000000002", "Credit", "PLATA PLATA", ""],
+          ["", "978", "EUR", "16.06.2026 10:00:00", "16.06.2026 10:00:00", "000000XXXXXX0000", "AMAZON PAYMENTS DOO BERLIN", "TX0000000003", "42", "0", "", "R00003", "REF0000000003#3#83#TX0000000003", "POS", "AMAZON PAYMENTS DOO BERLIN", ""],
+          ["", "941", "RSD", "15.06.2026 09:15:00", "15.06.2026 09:15:00", "000000XXXXXX0000", "Bankomat Raiffeisen Beograd", "TX0000000004", "10000", "0", "", "R00004", "REF0000000004#3#84#TX0000000004", "ATM", "Bankomat Raiffeisen Beograd", ""]
+        ]
+      ]
+    ],
+    "111000000000000002": [
+      [
+        null,
+        [
+          ["", "941", "RSD", "14.06.2026 12:00:00", "14.06.2026 12:00:00", "000000XXXXXX0000", "menjacnica Raiffeisen Beograd", "TX0000000005", "5000", "0", "", "R00005", "REF0000000005#3#85#TX0000000005", "ExchBuy", "menjacnica Raiffeisen Beograd", ""],
+          ["", "941", "RSD", "13.06.2026 20:00:00", "13.06.2026 20:00:00", "000000XXXXXX0000", "NETFLIX.COM LU AMSTERDAM", "TX0000000006", "799", "0", "", "R00006", "REF0000000006#3#86#TX0000000006", "POS", "NETFLIX.COM LU AMSTERDAM", ""]
+        ]
+      ]
+    ]
+  }
+}

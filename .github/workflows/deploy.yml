@@ -13,29 +13,33 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: app
+
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Setup Node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '20'
 
     - name: Install dependencies
-      run: npm install
+      run: npm ci
 
     - name: Run build
       run: npm run build
 
     - name: Upload build artifact
-      uses: actions/upload-pages-artifact@v2
+      uses: actions/upload-pages-artifact@v3
       with:
-        path: build/
+        path: app/dist/
         retention-days: 365
 
     - name: Deploy to GitHub Pages
-      uses: actions/deploy-pages@v2
+      uses: actions/deploy-pages@v4
       with:
         token: ${{ github.token }}
 
